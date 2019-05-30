@@ -1,0 +1,72 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_ipsla_udp_echo_rtt",
+        "kpi_name": "IP SLA UDP Echo RTT",
+        "category": "IPSLA",
+        "summary": "Monitors IP SLA UDP echo RTT; generates an alert when unusual RTT values occur",
+        "details": "Monitors IP SLA UDP echo RTT; generates an alert when unusual RTT values occur",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 1,
+                "min": 1,
+                "max": 15,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-man-ipsla-oper:ipsla/operation-data/operations/operation/statistics/latest/target/common-stats/response-time"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_ipsla_udp_echo_rtt_template.tick",
+              "script": "",
+              "template": "stream-stddev-activate-master-template.tick",
+              "template_vars": "ipsla_udp_echo_rtt_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_ipsla_udp_echo_rtt_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_7d_ipsla_udp_echo_rtt_vars.json",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_ipsla_udp_echo_rtt_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_30d_ipsla_udp_echo_rtt_vars.json",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-ipsla-udp-echo-rtt.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "baselining": false,
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-man-ipsla-oper:2015-11-09"
+      }
+    ]
+  }
+}

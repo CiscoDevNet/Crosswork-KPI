@@ -1,0 +1,91 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "type": "SNMP",
+        "kpi_id": "pulse_device_uptime",
+        "kpi_name": "Device uptime",
+        "category": "BASICS",
+        "summary": "Monitors device uptime",
+        "details": "Monitors device uptime",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 10,
+                "min": 10,
+                "max": 30,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "SNMPv2-MIB:SNMPv2-MIB/system/sysObjectID"
+                  },
+                  {
+                    "path_id": "SNMPv2-MIB:SNMPv2-MIB/system/sysUpTime"
+                  },
+                  {
+                    "path_id": "SNMPv2-MIB:SNMPv2-MIB/system/sysContact"
+                  },
+                  {
+                    "path_id": "SNMPv2-MIB:SNMPv2-MIB/system/sysName"
+                  },
+                  {
+                    "path_id": "SNMPv2-MIB:SNMPv2-MIB/system/sysLocation"
+                  },
+                  {
+                    "path_id": "SNMPv2-MIB:SNMPv2-MIB/system/sysServices"
+                  },
+                  {
+                    "path_id": "SNMPv2-MIB:SNMPv2-MIB/system/sysORLastChange"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_device_uptime_template.tick",
+              "script": "",
+              "template": "stream-simple-threshold-below-master-template.tick",
+              "template_vars": "pulse_device_uptime.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_device_uptime_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_7d_device_uptime_vars.json",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_device_uptime_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_30d_device_uptime_vars.json",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "baselining": false,
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-device-uptime-summary.json",
+              "label": "Summary"
+            }
+          ]
+        },
+        "sensor_type": "SNMP",
+        "module_and_revision": "SNMPv2-MIB:"
+      }
+    ]
+  }
+}

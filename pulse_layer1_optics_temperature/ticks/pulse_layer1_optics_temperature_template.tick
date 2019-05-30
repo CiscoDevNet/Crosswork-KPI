@@ -1,0 +1,218 @@
+//-----------------------------------------------------------------------------
+// pulse_layer1_optics_temperature_template.tick - Pulse TICKscript Template
+//
+// Master template: five_state_alert-master-template
+//
+// This script outputs alerts for values with 5 different states of severity,
+// where the strings representing the state is read from influx and defined by the user
+// in the vars file as major_hi_string, minor_hi_string, normal_string, minor_lo_string, major_lo_string
+//
+// Copyright (c) 2017 by Cisco Systems, Inc.
+// All rights reserved.
+//-----------------------------------------------------------------------------
+
+//PULSE_RUN_TIME Alert db to store back to
+var alerts_db string
+
+//PULSE_RUN_TIME InfluxDB Measurement for storing alerts back
+var alerts_meas string
+
+//PULSE_RUN_TIME InfluxDB RP for storing alerts back
+var alerts_rp string
+
+//PULSE_RUN_TIME Producer name or regex for producer names
+var uuid string
+
+//KPI_INTERNAL KPI ID of the kpi this TICKscript measures
+var kpi_id = 'pulse_layer1_optics_temperature'
+
+//KPI_INTERNAL Alert ID for this KPI Alert event
+var alert_id = 'pulse_layer1_optics_temperature'
+
+//KPI_INTERNAL Alert ID for clear event
+var clear_id = 'pulse_layer1_optics_temperature'
+
+//KPI_INTERNAL Measurement in influxDB to retrieve the data from
+var measurement = 'Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface'
+
+//KPI_INTERNAL Optional where filter expression to filter data stream before passing for transformation
+var where_filter = lambda: TRUE
+
+// KPI_INTERNAL filter var to filter data only related to producer(s)
+var where_producer = lambda: TRUE
+
+//KPI_INTERNAL Optional list of group by dimensions
+var groups = ['Producer', 'interface-name']
+
+//KPI_INTERNAL Lambda expression to reduce raw data to KPI
+var stream_eval_lambda = lambda: "phy-info__phy-details__dig-opt-mon-alarms__transceiver-temperature"
+
+//KPI_THRESHOLDS (Major High Alert String) String indicating that the value is in major high state
+var major_hi_string = 'alarm-high'
+
+//KPI_THRESHOLDS (Minor High Alert String) String indicating that the value is in minor high state
+var minor_hi_string = 'warning-high'
+
+//KPI_THRESHOLDS (Normal String) String indicating that the value is in normal state
+var normal_string = 'normal'
+
+//KPI_THRESHOLDS (Minor Low Alert String) String indicating that the value is in minor low state
+var minor_lo_string = 'warning-low'
+
+//KPI_THRESHOLDS (Major Low Alert String) String indicating that the value is in major low state
+var major_lo_string = 'alarm-low'
+
+//KPI_THRESHOLDS (Alert Critical Time) Time that needs to pass after entering the alert state to generate a CRIT alert (default 0 seconds)
+var alert_crit_time = 0.0
+
+//KPI_THRESHOLDS (Alert Warning Time) Time that needs to pass after entering the alert state to generate a WARN alert (default equal to Alert Critical Time)
+var alert_warn_time = 0.0
+
+//KPI_INTERNAL Unit of time for alert alerts
+var time_unit = 1s
+
+//KPI_THRESHOLDS (Clear Time) Time that needs to pass after entering the clear state to generate a CLEAR alert  (default 0 seconds)
+var clear_time = 1.0
+
+//KPI_INTERNAL Message when data is in major high state
+var major_hi_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  has alarm high temperature!'
+
+//KPI_INTERNAL Message when data is in minor high state
+var minor_hi_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  has warning high temperature!'
+
+//KPI_INTERNAL Message when data is in normal state
+var normal_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  has normal temperature.'
+
+//KPI_INTERNAL Message when data is in minor low state
+var minor_lo_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  has warning low temperature!'
+
+//KPI_INTERNAL Message when data is in low state
+var major_lo_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  has alarm low temperature!'
+
+
+var data = stream //stream0
+    |from() //from1
+        .measurement(measurement)
+        .where(where_producer)
+        .where(where_filter)
+        .groupBy(groups)
+        .quiet()
+    |default() //insert kpi_id //default2
+        .tag('kpi_id', kpi_id)
+        .field('alert_src', 'TICK')
+
+var transform = data
+    |eval(stream_eval_lambda)//evaluation/reduction of stream data done here //eval3
+        .as('stream_eval_result_string') //internal field reference
+    .quiet()
+
+var major_hi_branch = transform
+    |stateDuration(lambda: "stream_eval_result_string" == major_hi_string) //stateDuration4
+        .unit(time_unit)
+        .as('major_hi_duration')
+
+var minor_hi_branch = transform
+    |stateDuration(lambda: "stream_eval_result_string" == minor_hi_string) //stateDuration5
+        .unit(time_unit)
+        .as('minor_hi_duration')
+
+var clear_branch = transform
+    |stateDuration(lambda: "stream_eval_result_string" == normal_string ) //stateDuration6
+        .unit(time_unit)
+        .as('clear_duration')
+
+var minor_lo_branch = transform
+    |stateDuration(lambda: "stream_eval_result_string" == minor_lo_string) //stateDuration7
+        .unit(time_unit)
+        .as('minor_lo_duration')
+
+var major_lo_branch = transform
+    |stateDuration(lambda: "stream_eval_result_string" == major_lo_string) //stateDuration8
+        .unit(time_unit)
+        .as('major_lo_duration')
+
+
+major_hi_branch
+    |alert() //alert9
+         // Critical after input time
+         .crit(lambda: "major_hi_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(major_hi_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where10
+    |influxDBOut() //influxDBOut11
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'major_hi_alert')
+
+minor_hi_branch
+    |alert() //alert12
+         // Warn after input time
+         .warn(lambda: "minor_hi_duration" >= alert_warn_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(minor_hi_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where13
+    |influxDBOut() //influxDBOut14
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'minor_hi_alert')
+
+clear_branch
+    |alert() //alert15
+        //info on clear after input time
+         .info(lambda: "clear_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(normal_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where16
+    |influxDBOut() //influxDBOut17
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'clear')
+
+minor_lo_branch
+    |alert() //alert18
+         // Warn after input time
+         .warn(lambda: "minor_lo_duration" >= alert_warn_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(minor_lo_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where19
+    |influxDBOut() //influxDBOut20
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'minor_lo_alert')
+
+major_lo_branch
+    |alert() //alert21
+         // Critical after input time
+         .crit(lambda: "major_lo_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(major_lo_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where22
+    |influxDBOut() //influxDBOut23
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'major_lo_alert')

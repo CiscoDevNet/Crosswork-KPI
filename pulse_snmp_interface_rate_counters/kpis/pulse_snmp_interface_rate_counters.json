@@ -1,0 +1,130 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_snmp_interface_rate_counters",
+        "kpi_name": "SNMP interface rate counters",
+        "category": "Layer2-Traffic",
+        "summary": "Monitors interface statistics as rate counters",
+        "details": "Monitors interface statistics as rate counters; generates an alert when unusual traffic rates occur",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 5,
+                "min": 1,
+                "max": 15,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifName"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifDescr"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifAlias"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifType"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifMtu"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifSpeed"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifAdminStatus"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifOperStatus"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifHCInOctets"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifHCOutOctets"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifHCInUcastPkts"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifHCInMulticastPkts"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifHCInBroadcastPkts"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifHCOutUcastPkts"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifHCOutMulticastPkts"
+                  },
+                  {
+                    "path_id": "IF-MIB:IF-MIB/ifTable/ifEntry/ifHCOutBroadcastPkts"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_snmp_interface_rate_counters_rxrate_template.tick",
+              "script": "",
+              "template": "stream-derivative-stddev-alert-master-template.tick",
+              "template_vars": "snmp_interface_rate_counters_rxrate_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_snmp_interface_rate_counters_txrate_template.tick",
+              "script": "",
+              "template": "stream-derivative-stddev-alert-master-template.tick",
+              "template_vars": "snmp_interface_rate_counters_txrate_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_snmp_interface_rate_counters_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_7d_snmp_interface_rate_counters_vars.json",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_snmp_interface_rate_counters_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_30d_snmp_interface_rate_counters_vars.json",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "SNMP-interface-rate-counters-summary.json",
+              "label": "Summary"
+            },
+            {
+              "type": "jsonfile",
+              "value": "SNMP-interface-rate-counters-raw.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "baselining": false,
+        "sensor_type": "SNMP",
+        "module_and_revision": "IF-MIB:"
+      }
+    ]
+  }
+}

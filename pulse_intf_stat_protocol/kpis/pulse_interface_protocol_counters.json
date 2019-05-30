@@ -1,0 +1,114 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_intf_stat_protocol",
+        "kpi_name": "Interface counters by protocol",
+        "category": "Layer3-Traffic",
+        "summary": "Monitors interface statistics by protocol",
+        "details": "Monitors interface statistics (such as incoming and outgoing packets or byte counters) organized by protocol",
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_interface_protocol_counters_rxrate_template.tick",
+              "script": "",
+              "template": "stream-stddev-aggregate-alert-master-template.tick",
+              "template_vars": "interface_protocol_counters_rxrate_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_interface_protocol_counters_txrate_template.tick",
+              "script": "",
+              "template": "stream-stddev-aggregate-alert-master-template.tick",
+              "template_vars": "interface_protocol_counters_txrate_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_intf_stat_protocol_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_7d_intf_stat_protocol_vars.json",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_intf_stat_protocol_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_30d_intf_stat_protocol_vars.json",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-interface-protocol-counters-summary.json",
+              "label": "Summary"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-interface-protocol-counters-detail.json",
+              "label": "Detailed"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-interface-protocol-counters-raw.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "baselining": false,
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-infra-statsd-oper:2015-11-09",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 5,
+                "min": 1,
+                "max": 15,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/protocols/protocol/bytes-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/protocols/protocol/bytes-sent"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/protocols/protocol/packets-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/protocols/protocol/packets-sent"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/protocols/protocol/protocol"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/protocols/protocol/input-data-rate"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/protocols/protocol/input-packet-rate"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/protocols/protocol/output-data-rate"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/protocols/protocol/output-packet-rate"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

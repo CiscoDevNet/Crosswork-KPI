@@ -1,0 +1,142 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_layer1_optics_alarms",
+        "kpi_name": "Layer 1 optical alarms",
+        "category": "Layer1-Optics",
+        "summary": "Monitors per-port optical alarms, current and past",
+        "details": "Monitors per-port optical alarms, current and past",
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-layer1-optics-alarms-Raw.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_layer1_optics_alarms_template.tick",
+              "script": "",
+              "template": "layer1_optics_alarms-master-template.tick",
+              "template_vars": "pulse_layer1_optics_alarms_vars.json",
+              "type": "stream",
+              "scope": "local"
+            }
+          ]
+        },
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-drivers-media-eth-oper:2015-01-07",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 5,
+                "min": 5,
+                "max": 15,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/admin-state"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/oper-state-up"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/link-state"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/flowcontrol"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/bandwidth-utilization"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/bandwidth"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/current-alarms/pcs-loss-of-block-lock-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/current-alarms/local-fault-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/current-alarms/remote-fault-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/current-alarms/sd-ber-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/current-alarms/squelch-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/current-alarms/rx-opd-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/current-alarms/received-loss-of-signal-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/current-alarms/loss-of-synchronization-data-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/current-alarms/hi-ber-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/current-alarms/sf-ber-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/led-state"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/speed"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/duplex"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/ipg"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/previous-alarms/squelch-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/previous-alarms/pcs-loss-of-block-lock-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/previous-alarms/sf-ber-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/previous-alarms/loss-of-synchronization-data-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/previous-alarms/sd-ber-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/previous-alarms/hi-ber-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/previous-alarms/rx-opd-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/previous-alarms/received-loss-of-signal-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/previous-alarms/local-fault-alarm"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/previous-alarms/remote-fault-alarm"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

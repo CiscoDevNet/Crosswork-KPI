@@ -1,0 +1,139 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_ethernet_port_stats",
+        "kpi_name": "Ethernet port packet statistics",
+        "category": "Layer1-Traffic",
+        "summary": "Monitors port transmit and receive packet statistics",
+        "details": "Monitors port transmit and receive packet statistics",
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_ethernet_port_stats_rxrate_template.tick",
+              "script": "",
+              "template": "stream-derivative-stddev-alert-master-template.tick",
+              "template_vars": "ethernet_port_stats_rxrate_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_ethernet_port_stats_txrate_template.tick",
+              "script": "",
+              "template": "stream-derivative-stddev-alert-master-template.tick",
+              "template_vars": "ethernet_port_stats_txrate_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_ethernet_port_stats_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_7d_ethernet_port_stats_vars.json",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_ethernet_port_stats_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_30d_ethernet_port_stats_vars.json",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-ethernet-packet-stats-pie.json",
+              "label": "PieChart"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-ethernet-packet-stats-rates.json",
+              "label": "LineGraph"
+            }
+          ]
+        },
+        "baselining": false,
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-drivers-media-eth-oper:2015-01-07",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 5,
+                "min": 1,
+                "max": 15,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-total-bytes"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-good-bytes"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-total-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received8021q-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-pause-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-unknown-opcodes"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-good-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-unicast-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-multicast-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-broadcast-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/total-bytes-transmitted"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/total-good-bytes-transmitted"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/total-frames-transmitted"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted8021q-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-total-pause-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-good-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-unicast-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-multicast-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-broadcast-frames"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

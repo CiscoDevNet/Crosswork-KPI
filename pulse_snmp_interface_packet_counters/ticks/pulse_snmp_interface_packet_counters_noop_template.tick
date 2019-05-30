@@ -1,0 +1,32 @@
+//-----------------------------------------------------------------------------
+// pulse_snmp_interface_packet_counters_noop_template.tick - Pulse TICKscript Template
+//
+// Master template: noop-master-template
+//
+// Description: This alert template is used to only observe data patterns, not generate alerts on them.
+//
+// Copyright (c) 2017 by Cisco Systems, Inc.
+// All rights reserved.
+//-----------------------------------------------------------------------------
+
+//PULSE_RUN_TIME Producer name or regex(future) for producer names
+var uuid string
+
+//KPI_INTERNAL Measurement in influxDB to retrieve the data from
+var measurement = 'IF-MIB:IF-MIB/ifTable/ifEntry'
+
+//KPI_INTERNAL Optional where filter expression to filter data stream before passing for transformation
+var where_filter = lambda: FALSE
+
+// KPI_INTERNAL filter var to filter data only related to producer(s)
+var where_producer = lambda: FALSE
+
+//KPI_INTERNAL Optional list of group by dimensions
+var groups = [*]
+
+var data = stream //stream0
+    |from() //from1
+        .measurement(measurement)
+        .where(where_producer)
+        .where(where_filter)
+        .groupBy(groups)

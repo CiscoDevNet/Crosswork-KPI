@@ -1,0 +1,103 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_interface_rate_counters",
+        "kpi_name": "Interface rate counters",
+        "category": "Layer2-Traffic",
+        "summary": "Monitors interface statistics as rate counters",
+        "details": "Monitors interface statistics as rate counters; generates an alert when unusual traffic rates occur",
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_interface_rate_counters_rxrate_template.tick",
+              "script": "",
+              "template": "stream-stddev-activate-master-template.tick",
+              "template_vars": "interface_rate_counters_rxrate_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_interface_rate_counters_txrate_template.tick",
+              "script": "",
+              "template": "stream-stddev-activate-master-template.tick",
+              "template_vars": "interface_rate_counters_txrate_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_interface_rate_counters_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_7d_interface_rate_counters_vars.json",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_interface_rate_counters_template.tick",
+              "script": "",
+              "template": "cq-master-template.tick",
+              "template_vars": "cq_30d_interface_rate_counters_vars.json",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-interface-rate-counters-summary.json",
+              "label": "Summary"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-interface-rate-counters-raw.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "baselining": false,
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-infra-statsd-oper:2015-11-09",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 5,
+                "min": 1,
+                "max": 15,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/data-rate/input-data-rate"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/data-rate/input-packet-rate"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/data-rate/output-data-rate"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/data-rate/output-packet-rate"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/data-rate/output-load"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/data-rate/input-load"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/data-rate/bandwidth"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
