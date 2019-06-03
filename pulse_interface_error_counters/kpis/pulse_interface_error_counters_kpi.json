@@ -1,0 +1,138 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_interface_error_counters",
+        "kpi_name": "Interface packet error counters",
+        "category": "Layer2-Traffic",
+        "summary": "Monitors interface transmit and receive error counters",
+        "details": "Monitors interface transmit and receive error counters; generates an alert when unusual error rates occur",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 5,
+                "min": 1,
+                "max": 15,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/output-drops"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/output-queue-drops"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/input-drops"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/input-queue-drops"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/runt-packets-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/giant-packets-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/throttled-packets-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/parity-packets-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/unknown-protocol-packets-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/input-errors"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/crc-errors"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/input-overruns"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/framing-errors-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/input-ignored-packets"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/input-aborts"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/output-errors"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/output-underruns"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/output-buffer-failures"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/output-buffers-swapped-out"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/carrier-transitions"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_interface_error_counters_rx_template.tick",
+              "script": "",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_interface_error_counters_tx_template.tick",
+              "script": "",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_interface_error_counters_template.tick",
+              "script": "",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_interface_error_counters_template.tick",
+              "script": "",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-interface-error-counters-summary.json",
+              "label": "Summary"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-interface-error-counters-detail.json",
+              "label": "Detailed"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-interface-error-counters-raw.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-infra-statsd-oper:2015-11-09"
+      }
+    ]
+  }
+}

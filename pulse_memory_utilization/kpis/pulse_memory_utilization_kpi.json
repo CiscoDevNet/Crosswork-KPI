@@ -1,0 +1,79 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_memory_utilization",
+        "kpi_name": "Memory utilization",
+        "category": "Memory",
+        "summary": "Monitors memory usage across route processor and line cards on routers",
+        "details": "Monitors memory usage across route processor and line cards on routers; generates an alert when memory usage is unusual",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 2,
+                "min": 2,
+                "max": 15,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-nto-misc-oper:memory-summary/nodes/node/summary/ram-memory"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-nto-misc-oper:memory-summary/nodes/node/summary/free-physical-memory"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-nto-misc-oper:memory-summary/nodes/node/summary/system-ram-memory"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-nto-misc-oper:memory-summary/nodes/node/summary/free-application-memory"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_memory_utilization_template.tick",
+              "script": "",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_30d_memory_utilization_template.tick",
+              "script": "",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_7d_memory_utilization_template.tick",
+              "script": "",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-memory-utilization-summary.json",
+              "label": "Summary"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-memory-utilization-raw.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-nto-misc-oper:2015-11-09"
+      }
+    ]
+  }
+}

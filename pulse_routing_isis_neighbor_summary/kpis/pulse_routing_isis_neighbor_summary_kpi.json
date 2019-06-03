@@ -1,0 +1,94 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_routing_isis_neighbor_summary",
+        "kpi_name": "ISIS neighbor summary",
+        "category": "Protocol-ISIS",
+        "summary": "Monitors IS-IS neighbor summaries for changes in neighbor status",
+        "details": "Monitors IS-IS neighbor summaries for changes in neighbor status; generates an alert when an anomaly is detected (such as neighbors down or flapping)",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 1,
+                "min": 1,
+                "max": 5,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/neighbor-summaries/neighbor-summary/level12-neigbors/neighbor-up-count"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/neighbor-summaries/neighbor-summary/level12-neigbors/neighbor-init-count"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/neighbor-summaries/neighbor-summary/level12-neigbors/neighbor-down-count"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/neighbor-summaries/neighbor-summary/level1-neighbors/neighbor-up-count"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/neighbor-summaries/neighbor-summary/level1-neighbors/neighbor-init-count"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/neighbor-summaries/neighbor-summary/level1-neighbors/neighbor-down-count"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/neighbor-summaries/neighbor-summary/level2-neighbors/neighbor-init-count"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/neighbor-summaries/neighbor-summary/level2-neighbors/neighbor-down-count"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/neighbor-summaries/neighbor-summary/level2-neighbors/neighbor-up-count"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_routing_isis_neighbor_summary_template.tick",
+              "script": "",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_routing_isis_neighbor_summary_template.tick",
+              "script": "",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_routing_isis_neighbor_summary_template.tick",
+              "script": "",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-routing-isis-neighbor-summary.json",
+              "label": "Summary"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-routing-isis-neighbor-summary-raw.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-clns-isis-oper:2015-11-09"
+      }
+    ]
+  }
+}

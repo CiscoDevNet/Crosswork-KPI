@@ -1,0 +1,109 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_ethernet_port_packet_size_distribution",
+        "kpi_name": "Ethernet port packet size distribution",
+        "category": "Layer1-Traffic",
+        "summary": "Monitors port transmit and receive packet size distributions",
+        "details": "Monitors port transmit and receive packet size distributions",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 5,
+                "min": 1,
+                "max": 15,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-total64-octet-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-total-octet-frames-from65-to127"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-total-octet-frames-from128-to255"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-total-octet-frames-from256-to511"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-total-octet-frames-from512-to1023"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-total-octet-frames-from1024-to1518"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-total-octet-frames-from1519-to-max"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-total64-octet-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-total-octet-frames-from65-to127"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-total-octet-frames-from128-to255"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-total-octet-frames-from256-to511"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-total-octet-frames-from512-to1023"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-total-octet-frames-from1024-to1518"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-total-octet-frames-from1518-to-max"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_ethernet_port_packet_size_distribution_noop_template.tick",
+              "script": "",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_ethernet_port_packet_size_distribution_template.tick",
+              "script": "",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_ethernet_port_packet_size_distribution_template.tick",
+              "script": "",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-ethernet-packet-size-distribution-line.json",
+              "label": "LineGraph"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-ethernet-packet-size-distribution-pie.json",
+              "label": "PieChart"
+            }
+          ]
+        },
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-drivers-media-eth-oper:2015-01-07"
+      }
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_interface_packet_counters",
+        "kpi_name": "Interface packet counters",
+        "category": "Layer2-Traffic",
+        "summary": "Monitors interface transmit and receive counters",
+        "details": "Monitors interface transmit and receive counters; generates an alert when unusual traffic rates occur",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 5,
+                "min": 1,
+                "max": 15,
+                "increment": 1
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/packets-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/bytes-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/multicast-packets-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/broadcast-packets-received"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/packets-sent"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/bytes-sent"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/multicast-packets-sent"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-infra-statsd-oper:infra-statistics/interfaces/interface/latest/generic-counters/broadcast-packets-sent"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_interface_packet_counters_noop_template.tick",
+              "script": "",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_interface_packet_counters_template.tick",
+              "script": "",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_interface_packet_counters_template.tick",
+              "script": "",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-interface-packet-counters-summary.json",
+              "label": "Summary"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-interface-packet-counters-detail.json",
+              "label": "Detailed"
+            }
+          ]
+        },
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-infra-statsd-oper:2015-11-09"
+      }
+    ]
+  }
+}
