@@ -2,7 +2,7 @@
 
 Crosswork can be configured to forward alerts generated from KPIs.
 Alerts can be forwarded to services outside of Crosswork for further processing,
-e.g.  Splunk, Webex Teams, Sitman, and ServiceNow.Crosswork
+e.g.  Splunk, Webex Teams, Sitman, and ServiceNow.
 
 # Alert Message Format
 
