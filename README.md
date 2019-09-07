@@ -15,7 +15,9 @@ Following are required to use the KPIs:
 ## Documentation:
 
 Please refer to the documentation at the following link to understand how to use the KPIs.
-[Cisco Crosswork DevNet page](https://developer.cisco.com/docs/crosswork/)
+[Cisco Crosswork DevNet page](https://developer.cisco.com/docs/crosswork/).
+[Alert forwarding page](https://github.com/CiscoDevNet/Crosswork-KPI/AlertForwarding.md) describes data format of alert messages.
+
 
 ## Usage
 
