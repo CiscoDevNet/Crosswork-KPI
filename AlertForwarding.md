@@ -10,10 +10,11 @@ Alert messages are data points in time series database. Some of the fields in th
 some may vary from KPI to KPI. In the example below "node-name" is applicable to KPI "pulse_cpu_utilization",
 while "interface-name" is applicable to KPI "pulse_interface_rate_counters". The variable fields are sensor keys
 as documented on [DevNet Crosswork KPI](https://github.com/CiscoDevNet/Crosswork-KPI). For example,
-[pulse_cpu_utilization](https://github.com/CiscoDevNet/Crosswork-KPI/blob/master/pulse_cpu_utilization/pulse_cpu_utilization.md)
+[pulse_cpu_utilization](https://github.com/CiscoDevNet/Crosswork-KPI/blob/master/pulse_cpu_utilization/pulse_cpu_utilization.md) and 
 [pulse_interface_rate_counters](https://github.com/CiscoDevNet/Crosswork-KPI/blob/master/pulse_interface_rate_counters/pulse_interface_rate_counters.md).
 
 Example
+```json
 [{
 		"series": [{
 			"columns": [
@@ -97,4 +98,5 @@ Example
 		}]
 	}
 ]
+```
 
