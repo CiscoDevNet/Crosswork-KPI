@@ -1,0 +1,563 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_ROBOT_ALERTDB",
+      "label": "robot_alertdb",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "4.2.0"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "influxdb",
+      "name": "InfluxDB",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "query": "SELECT * FROM $ALERTS_RP.\"alerts\" WHERE $timeFilter AND Producer =~ /^$Router$/ AND id =~ /pulse_cpu_threshold/ AND level = 'CRITICAL'",
+        "type": "alert",
+        "titleColumn": "id",
+        "enable": true,
+        "iconColor": "rgb(253, 7, 7)",
+        "limit": 100,
+        "tagsColumn": "Producer",
+        "datasource": "robot_alertdb",
+        "name": "CRITICAL",
+        "textColumn": "msg"
+      },
+      {
+        "query": "SELECT * FROM $ALERTS_RP.\"alerts\" WHERE $timeFilter AND Producer =~ /^$Router$/ AND id =~ /pulse_cpu_threshold/ AND level = 'WARNING'",
+        "type": "alert",
+        "titleColumn": "id",
+        "enable": true,
+        "iconColor": "rgb(237, 149, 3)",
+        "limit": 100,
+        "tagsColumn": "Producer",
+        "datasource": "robot_alertdb",
+        "name": "WARNING",
+        "textColumn": "msg"
+      },
+      {
+        "datasource": "robot_alertdb",
+        "enable": true,
+        "iconColor": "rgb(253, 7, 7)",
+        "limit": 100,
+        "name": "MAJOR",
+        "query": "SELECT * FROM $ALERTS_RP.\"alerts\" WHERE $timeFilter AND Producer =~ /^$Router$/ AND id =~ /pulse_cpu_threshold/ AND level = 'MAJOR'",
+        "tagsColumn": "Producer",
+        "textColumn": "msg",
+        "titleColumn": "id",
+        "type": "alert"
+      },
+      {
+        "datasource": "robot_alertdb",
+        "enable": true,
+        "iconColor": "rgb(237, 149, 3)",
+        "limit": 100,
+        "name": "MINOR",
+        "query": "SELECT * FROM $ALERTS_RP.\"alerts\" WHERE $timeFilter AND Producer =~ /^$Router$/ AND id =~ /pulse_cpu_threshold/ AND level = 'MINOR'",
+        "tagsColumn": "Producer",
+        "textColumn": "msg",
+        "titleColumn": "id",
+        "type": "alert"
+      },
+      {
+        "query": "SELECT * FROM $ALERTS_RP.\"alerts\" WHERE $timeFilter AND Producer =~ /^$Router$/ AND id =~ /pulse_cpu_threshold/ AND level = 'INFO'",
+        "type": "alert",
+        "titleColumn": "id",
+        "enable": false,
+        "iconColor": "rgb(34, 191, 13)",
+        "limit": 100,
+        "tagsColumn": "Producer",
+        "datasource": "robot_alertdb",
+        "name": "INFO",
+        "textColumn": "msg"
+      }
+    ],
+    "enable": true
+  },
+  "description": "",
+  "editable": false,
+  "gnetId": null,
+  "graphTooltip": 2,
+  "hideControls": false,
+  "id": null,
+  "links": [],
+  "refresh": false,
+  "rows": [
+    {
+      "collapse": false,
+      "height": "250",
+      "repeat": "Router",
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "$Router / CPU usage",
+      "titleSize": "h5",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "robot_alertdb",
+          "decimals": 2,
+          "fill": 1,
+          "id": 1,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": false,
+            "max": true,
+            "min": true,
+            "rightSide": true,
+            "show": true,
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 1,
+          "points": true,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "[[tag_node-name]]",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "policy": "default",
+              "query": "SELECT /^$KpiFields$/ FROM $RP.\"Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization\" WHERE  \"Producer\" =~ /^$Router$/ AND \"node-name\" =~ /^$nodename$/ AND $timeFilter GROUP BY Producer,\"node-name\"",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "$Router: [[tag_node-name]]",
+              "dsType": "influxdb",
+              "groupBy": [],
+              "hide": true,
+              "measurement": "Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization",
+              "policy": "rp1h_1",
+              "query": "SELECT derivative(/^$KpiFields$/, 1m) FROM $RP.\"Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization\" WHERE \"Producer\" =~ /^$Router$/  AND $timeFilter GROUP BY Producer,\"node-name\"",
+              "rawQuery": true,
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [
+                      "5m"
+                    ],
+                    "type": "derivative"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "$Router - CPU Usage ( $KpiFields )",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+              "total"
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "none",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "collapse": false,
+      "height": "250",
+      "repeat": "Router",
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "$Router / CPU Change Rate",
+      "titleSize": "h5",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "robot_alertdb",
+          "decimals": 2,
+          "fill": 1,
+          "id": 2,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": false,
+            "max": true,
+            "min": true,
+            "rightSide": true,
+            "show": true,
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 1,
+          "points": true,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$Router: [[tag_node-name]]",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": true,
+              "policy": "default",
+              "query": "SELECT /^$KpiFields$/ FROM $RP.\"Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization\" WHERE  \"Producer\" =~ /^$Router$/ AND $timeFilter GROUP BY Producer,\"node-name\"",
+              "rawQuery": true,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            },
+            {
+              "alias": "[[tag_node-name]]",
+              "dsType": "influxdb",
+              "groupBy": [],
+              "hide": false,
+              "measurement": "Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization",
+              "policy": "rp1h_1",
+              "query": "SELECT derivative(/^$KpiFields$/, 1m) FROM $RP.\"Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization\" WHERE \"Producer\" =~ /^$Router$/ AND \"node-name\" =~ /^$nodename$/ AND $timeFilter GROUP BY Producer,\"node-name\"",
+              "rawQuery": true,
+              "refId": "B",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [
+                      "5m"
+                    ],
+                    "type": "derivative"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "$Router - CPU Usage Derivative ($KpiFields)",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+              "total"
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "none",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 14,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "tags": [],
+        "multi": false,
+        "allValue": null,
+        "query": "show retention policies",
+        "tagsQuery": "",
+        "type": "query",
+        "options": [],
+        "label": "RP",
+        "includeAll": false,
+        "name": "RP",
+        "refresh": 1,
+        "datasource": "robot_alertdb",
+        "current": {
+          "value": "rp1h_1",
+          "text": "rp1h_1"
+        },
+        "hide": 2,
+        "useTags": false,
+        "tagValuesQuery": "",
+        "regex": "",
+        "sort": 0
+      },
+      {
+        "tagValuesQuery": "",
+        "useTags": false,
+        "allValue": null,
+        "tagsQuery": "",
+        "label": "ALERTS_RP",
+        "current": {
+          "value": "rp30d_1",
+          "text": "rp30d_1"
+        },
+        "tags": [],
+        "type": "query",
+        "includeAll": false,
+        "options": [],
+        "refresh": 1,
+        "regex": "",
+        "sort": 0,
+        "query": "show retention policies",
+        "datasource": "robot_alertdb",
+        "hide": 2,
+        "name": "ALERTS_RP",
+        "multi": false
+      },
+      {
+        "allValue": "*",
+        "current": {},
+        "datasource": "robot_alertdb",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "Router",
+        "options": [],
+        "query": "Show Tag Values FROM $RP.\"Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization\" WITH Key = \"Producer\"",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": "*",
+        "current": {},
+        "datasource": "robot_alertdb",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Rack/Slot",
+        "multi": true,
+        "name": "nodename",
+        "options": [],
+        "query": "SHOW TAG VALUES FROM $RP.\"Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization\" WITH KEY= \"node-name\"  where Producer =~ /^$Router$/",
+        "refresh": 1,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": "total-cpu-five-minute",
+          "value": "total-cpu-five-minute"
+        },
+        "datasource": "robot_alertdb",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Avg Period",
+        "multi": false,
+        "name": "KpiFields",
+        "options": [],
+        "query": "SHOW FIELD KEYS FROM $RP.\"Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization\"",
+        "refresh": 1,
+        "regex": "/^total-*/",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "utc",
+  "title": "Pulse-cpu-threshold-summary",
+  "version": 10
+}

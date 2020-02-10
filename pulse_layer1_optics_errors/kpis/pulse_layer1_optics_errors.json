@@ -1,0 +1,83 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_layer1_optics_errors",
+        "kpi_name": "Layer 1 optical errors",
+        "category": "Layer1-Optics",
+        "summary": "Monitors per-port Layer 1 errors",
+        "details": "Monitors per-port Layer 1 errors; generates alert when error rates exceeds the configured threshold",
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-layer1-optics-errors-Raw.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_layer1_optics_errors_template.tick",
+              "script": "",
+              "template": "two_level_rate_threshold-master-template",
+              "template_vars": "layer1_optics_errors_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_layer1_optics_errors_template.tick",
+              "script": "",
+              "template": "cq-master-template",
+              "template_vars": "cq_7d_layer1_optics_errors_vars.json",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_layer1_optics_errors_template.tick",
+              "script": "",
+              "template": "cq-master-template",
+              "template_vars": "cq_30d_layer1_optics_errors_vars.json",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-drivers-media-eth-oper:2015-01-07",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 300,
+                "min": 10,
+                "max": 900,
+                "increment": 10
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/admin-state"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/oper-state-up"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/link-state"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/error-counts/sync-header-errors"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/error-counts/pcsbip-errors"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

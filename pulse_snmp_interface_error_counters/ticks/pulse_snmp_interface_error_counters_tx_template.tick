@@ -1,0 +1,144 @@
+//-----------------------------------------------------------------------------
+// pulse_snmp_interface_error_counters_tx_template.tick - Pulse TICKscript Template
+//
+// Master template: two_level_rate_threshold-master-template
+//
+// Description: This alert template detects abnormal rates of change in
+// measured values to detect rising or falling values.
+//
+// Copyright (c) 2017 by Cisco Systems, Inc.
+// All rights reserved.
+//-----------------------------------------------------------------------------
+
+//PULSE_RUN_TIME Alert db to store a
+var alerts_db string
+
+//PULSE_RUN_TIME InfluxDB Measurement for storing alerts back
+var alerts_meas string
+
+//PULSE_RUN_TIME InfluxDB RP for storing alerts back
+var alerts_rp string
+
+//PULSE_RUN_TIME KPI Profile id for filtering data stream
+var profile_id string
+
+//KPI_INTERNAL KPI ID of the kpi this TICKscript measures
+var kpi_id = 'pulse_snmp_interface_error_counters'
+
+//KPI_INTERNAL Alert ID for this KPI Alert event
+var alert_id = 'pulse_snmp_interface_error_counters_tx'
+
+//KPI_INTERNAL Alert message format string
+var alert_message = '{{ .Level }} : {{ index .Tags "ifDescr" }}  Tx error counters rate: {{ index .Fields "data_rate" | printf "%0.2f" }} pkts/sec > threshold: {{ index .Fields "alert_threshold" | printf "%0.2f"}}. Task: {{ .TaskName }}'
+
+//KPI_INTERNAL Clear message format string
+var clear_message = '{{ .Level }} : {{ index .Tags "ifDescr" }}  Tx error counters rate: {{ index .Fields "data_rate" | printf "%0.2f" }} pkts/sec < threshold: {{ index .Fields "clear_threshold" | printf "%0.2f"}}. Task: {{ .TaskName }}'
+
+//KPI_INTERNAL Measurement in influxDB to retrieve the data from
+var measurement = 'IF-MIB:IF-MIB/ifTable/ifEntry'
+
+//KPI_INTERNAL Optional where filter expression to filter data stream before passing for transformation
+var where_filter = lambda: TRUE
+
+// KPI_INTERNAL filter var to filter data only related to kpi profile id
+var where_producer = lambda: strContains("ProfileIDs", profile_id)
+
+//KPI_INTERNAL Optional list of group by dimensions
+var groups = ['Producer', 'ifIndex', 'ifDescr']
+
+//KPI_INTERNAL Lambda expression to reduce raw data to KPI
+var stream_eval_lambda = lambda: int("ifOutDiscards") +
+int("ifOutErrors")
+
+//KPI_THRESHOLDS (Alert Threshold) Value that rate must be equal or greater than to enter alert state
+var alert_threshold = 1000.0
+
+//KPI_THRESHOLDS (Alert Critical Time) Time that needs to pass after entering the alert state to generate a CRIT alert (default 0 seconds)
+var alert_crit_time = 2.0
+
+//KPI_THRESHOLDS (Alert Warning Time) Time that needs to pass after entering the alert state to generate a WARN alert (default 0 seconds)
+var alert_warn_time = 0.0
+
+//KPI_THRESHOLDS (Clear Threshold) Threshold that this value must fall below to enter the clear state
+var clear_threshold = 1000.0
+
+//KPI_THRESHOLDS (Clear Time) Time that needs to pass after entering the clear state to generate a CLEAR alert  (default 0 seconds)
+var clear_time = 1.0
+
+//KPI_INTERNAL Unit of time for alert alerts
+var time_unit = 1s
+
+//KPI_INTERNAL Unit of time for rate calculation
+var derivative_time_unit = 1s
+
+//PULSE_RUN_TIME (Downsample Factor) Down sample factor for alert evaluation applied on data stream (Default : 1 , Min : 1 , Max : 10)
+var downsample_factor = 1
+
+var data = stream //stream0
+    |from() //from1
+        .measurement(measurement)
+        .where(where_producer)
+        .where(where_filter)
+        .groupBy(groups)
+        .quiet()
+    |sample(downsample_factor) //sample2
+
+var transform = data
+    |eval(stream_eval_lambda)             //evaluation/reduction of stream data done here //eval3
+                .as('stream_eval_result') //internal field reference
+                .quiet()
+
+var rate = transform      //renamed deriv_branch -> rate
+    |derivative('stream_eval_result') //derivative4
+                .unit(derivative_time_unit)
+                .as('data_rate')
+                .quiet()
+    |stateDuration(lambda: "data_rate" >= alert_threshold) //stateDuration5
+                .unit(time_unit)
+                .as('alert_duration')
+    |stateDuration(lambda: "data_rate" < clear_threshold) //stateDuration6
+                    .unit(time_unit)
+                    .as('clear_duration')
+
+    |default() //insert the thresholds into the data stream //default7
+        .field('alert_threshold', alert_threshold)
+        .field('clear_threshold', clear_threshold)
+        .tag('kpi_id', kpi_id)
+        .field('alert_src', 'TICK')
+        .tag('profile_id', profile_id)
+
+rate
+    |alert() //alert8
+         // Warn after input time
+         .warn(lambda: "alert_duration" >= alert_warn_time)
+         // Critical after input time
+         .crit(lambda: "alert_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(alert_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where9
+    |influxDBOut() //influxDBOut10
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alert')
+
+rate
+    |alert() //alert11
+         //info on clear after input time
+         .info(lambda: "clear_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(clear_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where12
+    |influxDBOut() //influxDBOut13
+         .database(alerts_db)
+         .retentionPolicy(alerts_rp)
+         .measurement(alerts_meas)
+         .tag('state', 'clear')

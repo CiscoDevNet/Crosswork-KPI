@@ -1,0 +1,870 @@
+//-----------------------------------------------------------------------------
+// pulse_layer1_optics_alarms_template.tick - Pulse TICKscript Template
+//
+// Master template: layer1_optics_alarms-master-template
+//
+// This TICKscript is a special one used for the ethernet optics layer1 alarms kpi.
+// It consists of 10 different alarms with three possible states, alarm-set, alarm-not-set, alarm-not-supported.
+// The var file 'vars/pulse_layer1_optics_alarms_vars.json' exists with a naive variable definition.
+//
+// Copyright (c) 2017 by Cisco Systems, Inc.
+// All rights reserved.
+//-----------------------------------------------------------------------------
+
+//PULSE_RUN_TIME Alert db to store back to
+var alerts_db string
+
+//PULSE_RUN_TIME InfluxDB Measurement for storing alerts back
+var alerts_meas string
+
+//PULSE_RUN_TIME InfluxDB RP for storing alerts back
+var alerts_rp string
+
+//PULSE_RUN_TIME KPI Profile id for filtering data stream
+var profile_id string
+
+//KPI_INTERNAL KPI ID of the kpi this TICKscript measures
+var kpi_id = 'pulse_layer1_optics_alarms'
+
+//KPI_INTERNAL Alert ID for this KPI Alert event
+var alert_id = 'pulse_layer1_optics_alarms'
+
+//KPI_INTERNAL Alert ID for clear event
+var clear_id = 'pulse_layer1_optics_alarms'
+
+//KPI_INTERNAL Measurement in influxDB to retrieve the data from
+var measurement = 'Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface'
+
+//KPI_INTERNAL Optional where filter expression to filter data stream before passing for transformation
+var where_filter = lambda: isPresent("layer1-info__current-alarms__hi-ber-alarm") AND isPresent("layer1-info__current-alarms__local-fault-alarm") AND isPresent("layer1-info__current-alarms__loss-of-synchronization-data-alarm") AND isPresent("layer1-info__current-alarms__pcs-loss-of-block-lock-alarm") AND isPresent("layer1-info__current-alarms__received-loss-of-signal-alarm") AND isPresent("layer1-info__current-alarms__remote-fault-alarm") AND isPresent("layer1-info__current-alarms__rx-opd-alarm") AND isPresent("layer1-info__current-alarms__sd-ber-alarm") AND isPresent("layer1-info__current-alarms__squelch-alarm")
+
+// KPI_INTERNAL filter var to filter data only related to kpi profile id
+var where_producer = lambda: strContains("ProfileIDs", profile_id)
+
+//KPI_INTERNAL Optional list of group by dimensions
+var groups = ['Producer', 'interface-name']
+
+//KPI_INTERNAL Lambda expression to reduce raw data to KPI
+//var stream_eval_lambda = lambda: "phy-info__phy-details__dig-opt-mon-alarms__transceiver-voltage"
+
+//KPI_THRESHOLDS (Alarm-Set String) String indicating value is in major high state
+var alarm_set_string = 'alarm-set'
+
+//KPI_THRESHOLDS (Alarm-Not-Supported String) String indicating value is in minor high state
+var not_supported_string = 'alarm-not-supported'
+
+//KPI_THRESHOLDS (Alarm-Not-Set String) String indicating value is in normal state
+var alarm_not_set_string = 'alarm-not-set'
+
+//KPI_THRESHOLDS (Alert Critical Time) Time that needs to pass after entering the alert state to generate a CRIT alert (default 0 seconds)
+var alert_crit_time = 0.0
+
+//KPI_THRESHOLDS (Alert Warning Time) Time that needs to pass after entering the alert state to generate a WARN alert (default equal to Alert Critical Time value)
+var alert_warn_time = 0.0
+
+//KPI_INTERNAL Unit of time for alert alerts
+var time_unit = 1s
+
+//KPI_THRESHOLDS (Clear Time) Time that needs to pass after entering the clear state to generate a CLEAR alert  (default 0 seconds)
+var clear_time = 0.0
+
+//KPI_INTERNAL Message when data is in major high state
+var hi_ber_alarm_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm: hi_ber alarm is set!.'
+
+//KPI_INTERNAL Message when data is in minor high state
+var hi_ber_not_supported_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  hi_ber alarm is not supported.'
+
+//KPI_INTERNAL Message when data is in alarm_not_set state
+var hi_ber_alarm_not_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  hi_ber alarm is not set.'
+
+//KPI_INTERNAL Message when data is in major high state
+var local_fault_alarm_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  local_fault alarm is set!.'
+
+//KPI_INTERNAL Message when data is in minor high state
+var local_fault_not_supported_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  local_fault alarm is not supported.'
+
+//KPI_INTERNAL Message when data is in alarm_not_set state
+var local_fault_alarm_not_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  local_fault alarm is not set.'
+
+//KPI_INTERNAL Message when data is in major high state
+var loss_of_synchronization_data_alarm_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  loss_of_synchronization_data alarm is set!.'
+
+//KPI_INTERNAL Message when data is in minor high state
+var loss_of_synchronization_data_not_supported_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  loss_of_synchronization_data alarm is not supported.'
+
+//KPI_INTERNAL Message when data is in alarm_not_set state
+var loss_of_synchronization_data_alarm_not_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  loss_of_synchronization_data alarm is not set.'
+
+//KPI_INTERNAL Message when data is in major high state
+var pcs_loss_of_block_lock_alarm_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  pcs_loss_of_block_lock alarm is set!.'
+
+//KPI_INTERNAL Message when data is in minor high state
+var pcs_loss_of_block_lock_not_supported_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  pcs_loss_of_block_lock alarm is not supported.'
+
+//KPI_INTERNAL Message when data is in alarm_not_set state
+var pcs_loss_of_block_lock_alarm_not_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  pcs_loss_of_block_lock alarm is not set.'
+
+//KPI_INTERNAL Message when data is in major high state
+var received_loss_of_signal_alarm_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  received_loss_of_signal alarm is set!.'
+
+//KPI_INTERNAL Message when data is in minor high state
+var received_loss_of_signal_not_supported_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  received_loss_of_signal alarm is not supported.'
+
+//KPI_INTERNAL Message when data is in alarm_not_set state
+var received_loss_of_signal_alarm_not_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  received_loss_of_signal alarm is not set.'
+
+//KPI_INTERNAL Message when data is in major high state
+var remote_fault_alarm_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  remote_fault alarm is set!.'
+
+//KPI_INTERNAL Message when data is in minor high state
+var remote_fault_not_supported_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  remote_fault alarm is not supported.'
+
+//KPI_INTERNAL Message when data is in alarm_not_set state
+var remote_fault_alarm_not_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  remote_fault alarm is not set.'
+
+//KPI_INTERNAL Message when data is in major high state
+var rx_opd_alarm_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  rx_opd alarm is set!.'
+
+//KPI_INTERNAL Message when data is in minor high state
+var rx_opd_not_supported_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  rx_opd alarm is not supported.'
+
+//KPI_INTERNAL Message when data is in alarm_not_set state
+var rx_opd_alarm_not_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  rx_opd alarm is not set.'
+
+//KPI_INTERNAL Message when data is in major high state
+var sd_ber_alarm_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  sd_ber alarm is set!.'
+
+//KPI_INTERNAL Message when data is in minor high state
+var sd_ber_not_supported_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  sd_ber alarm is not supported.'
+
+//KPI_INTERNAL Message when data is in alarm_not_set state
+var sd_ber_alarm_not_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  sd_ber alarm is not set.'
+
+//KPI_INTERNAL Message when data is in major high state
+var sf_ber_alarm_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  sf_ber alarm is set!.'
+
+//KPI_INTERNAL Message when data is in minor high state
+var sf_ber_not_supported_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  sf_ber alarm is not supported.'
+
+//KPI_INTERNAL Message when data is in alarm_not_set state
+var sf_ber_alarm_not_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  sf_ber alarm is not set.'
+
+//KPI_INTERNAL Message when data is in major high state
+var squelch_alarm_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  squelch alarm is set!.'
+
+//KPI_INTERNAL Message when data is in minor high state
+var squelch_not_supported_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  squelch alarm is not supported.'
+
+//KPI_INTERNAL Message when data is in alarm_not_set state
+var squelch_alarm_not_set_message = '{{ .Level }} : {{ index .Tags "interface-name"  }} Alarm:  squelch alarm is not set.'
+
+//PULSE_RUN_TIME (Downsample Factor) Down sample factor for alert evaluation applied on data stream (Default : 1 , Min : 1 , Max : 10)
+var downsample_factor = 1
+
+var data = stream //stream0
+    |from() //from1
+        .measurement(measurement)
+        .where(where_producer)
+        .where(where_filter)
+        .groupBy(groups)
+        .quiet()
+    |sample(downsample_factor) //sample2
+    |default() //insert kpi_id //default3
+        .tag('kpi_id', kpi_id)
+        .field('alert_src', 'TICK')
+        .tag('profile_id', profile_id)
+
+var hi_ber_alarm_branch = data
+    |eval(lambda: "layer1-info__current-alarms__hi-ber-alarm") //eval4
+        .as('hi_ber')
+
+    |stateDuration(lambda: "hi_ber" == alarm_set_string) //stateDuration5
+                    .unit(time_unit)
+                    .as('hi_ber_alarm_set_duration')
+    |stateDuration(lambda: "hi_ber" == not_supported_string) //stateDuration6
+                    .unit(time_unit)
+                    .as('hi_ber_not_supported_duration')
+    |stateDuration(lambda: "hi_ber" == alarm_not_set_string ) //stateDuration7
+                    .unit(time_unit)
+                    .as('hi_ber_alarm_not_set_duration')
+
+hi_ber_alarm_branch
+    |alert() //alert8
+         // Critical after input time
+         .crit(lambda: "hi_ber_alarm_set_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(hi_ber_alarm_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where9
+    |influxDBOut() //influxDBOut10
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_set_alert')
+        .tag('layer1_optic_alarm', 'hi_ber')
+
+hi_ber_alarm_branch
+    |alert() //alert11
+         // Warn after input time
+         .info(lambda: "hi_ber_not_supported_duration" >= 0.0)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(hi_ber_not_supported_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where12
+    |influxDBOut() //influxDBOut13
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'not_supported_alert')
+        .tag('layer1_optic_alarm', 'hi_ber')
+
+hi_ber_alarm_branch
+    |alert() //alert14
+        //info on clear after input time
+         .info(lambda: "hi_ber_alarm_not_set_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(hi_ber_alarm_not_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where15
+    |influxDBOut() //influxDBOut16
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_not_set_alert')
+        .tag('layer1_optic_alarm', 'hi_ber')
+
+var local_fault_alarm_branch = data
+    |eval(lambda: "layer1-info__current-alarms__local-fault-alarm") //eval17
+        .as('local_fault')
+
+    |stateDuration(lambda: "local_fault" == alarm_set_string) //stateDuration18
+                    .unit(time_unit)
+                    .as('local_fault_alarm_set_duration')
+    |stateDuration(lambda: "local_fault" == not_supported_string) //stateDuration19
+                    .unit(time_unit)
+                    .as('local_fault_not_supported_duration')
+    |stateDuration(lambda: "local_fault" == alarm_not_set_string ) //stateDuration20
+                    .unit(time_unit)
+                    .as('local_fault_alarm_not_set_duration')
+
+local_fault_alarm_branch
+    |alert() //alert21
+         // Critical after input time
+         .crit(lambda: "local_fault_alarm_set_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(local_fault_alarm_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where22
+    |influxDBOut() //influxDBOut23
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_set_alert')
+        .tag('layer1_optic_alarm', 'local_fault')
+
+local_fault_alarm_branch
+    |alert() //alert24
+         // Warn after input time
+         .info(lambda: "local_fault_not_supported_duration" >= 0.0)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(local_fault_not_supported_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where25
+    |influxDBOut() //influxDBOut26
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'not_supported_alert')
+        .tag('layer1_optic_alarm', 'local_fault')
+
+local_fault_alarm_branch
+    |alert() //alert27
+        //info on clear after input time
+         .info(lambda: "local_fault_alarm_not_set_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(local_fault_alarm_not_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where28
+    |influxDBOut() //influxDBOut29
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_not_set_alert')
+        .tag('layer1_optic_alarm', 'local_fault')
+
+var loss_of_synchronization_data_alarm_branch = data
+    |eval(lambda: "layer1-info__current-alarms__loss-of-synchronization-data-alarm") //eval30
+        .as('loss_of_synchronization_data')
+
+    |stateDuration(lambda: "loss_of_synchronization_data" == alarm_set_string) //stateDuration31
+                    .unit(time_unit)
+                    .as('loss_of_synchronization_data_alarm_set_duration')
+
+
+    |stateDuration(lambda: "loss_of_synchronization_data" == not_supported_string) //stateDuration32
+                    .unit(time_unit)
+                    .as('loss_of_synchronization_data_not_supported_duration')
+
+    |stateDuration(lambda: "loss_of_synchronization_data" == alarm_not_set_string ) //stateDuration33
+                    .unit(time_unit)
+                    .as('loss_of_synchronization_data_alarm_not_set_duration')
+loss_of_synchronization_data_alarm_branch
+    |alert() //alert34
+         // Critical after input time
+         .crit(lambda: "loss_of_synchronization_data_alarm_set_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(loss_of_synchronization_data_alarm_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where35
+    |influxDBOut() //influxDBOut36
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_set_alert')
+        .tag('layer1_optic_alarm', 'loss_of_synchronization_data')
+
+loss_of_synchronization_data_alarm_branch
+    |alert() //alert37
+         // Warn after input time
+         .info(lambda: "loss_of_synchronization_data_not_supported_duration" >= 0.0)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(loss_of_synchronization_data_not_supported_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where38
+    |influxDBOut() //influxDBOut39
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'not_supported_alert')
+        .tag('layer1_optic_alarm', 'loss_of_synchronization_data')
+
+loss_of_synchronization_data_alarm_branch
+    |alert() //alert40
+        //info on clear after input time
+         .info(lambda: "loss_of_synchronization_data_alarm_not_set_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(loss_of_synchronization_data_alarm_not_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where41
+    |influxDBOut() //influxDBOut42
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_not_set_alert')
+        .tag('layer1_optic_alarm', 'loss_of_synchronization_data')
+
+var pcs_loss_of_block_lock_alarm_branch = data
+    |eval(lambda: "layer1-info__current-alarms__pcs-loss-of-block-lock-alarm") //eval43
+        .as('pcs_loss_of_block_lock')
+
+    |stateDuration(lambda: "pcs_loss_of_block_lock" == alarm_set_string) //stateDuration44
+                    .unit(time_unit)
+                    .as('pcs_loss_of_block_lock_alarm_set_duration')
+    |stateDuration(lambda: "pcs_loss_of_block_lock" == not_supported_string) //stateDuration45
+                    .unit(time_unit)
+                    .as('pcs_loss_of_block_lock_not_supported_duration')
+    |stateDuration(lambda: "pcs_loss_of_block_lock" == alarm_not_set_string ) //stateDuration46
+                    .unit(time_unit)
+                    .as('pcs_loss_of_block_lock_alarm_not_set_duration')
+
+pcs_loss_of_block_lock_alarm_branch
+    |alert() //alert47
+         // Critical after input time
+         .crit(lambda: "pcs_loss_of_block_lock_alarm_set_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(pcs_loss_of_block_lock_alarm_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where48
+    |influxDBOut() //influxDBOut49
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_set_alert')
+        .tag('layer1_optic_alarm', 'pcs_loss_of_block_lock')
+
+pcs_loss_of_block_lock_alarm_branch
+    |alert() //alert50
+         // Warn after input time
+         .info(lambda: "pcs_loss_of_block_lock_not_supported_duration" >= 0.0)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(pcs_loss_of_block_lock_not_supported_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where51
+    |influxDBOut() //influxDBOut52
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'not_supported_alert')
+        .tag('layer1_optic_alarm', 'pcs_loss_of_block_lock')
+
+pcs_loss_of_block_lock_alarm_branch
+    |alert() //alert53
+        //info on clear after input time
+         .info(lambda: "pcs_loss_of_block_lock_alarm_not_set_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(pcs_loss_of_block_lock_alarm_not_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where54
+    |influxDBOut() //influxDBOut55
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_not_set_alert')
+        .tag('layer1_optic_alarm', 'pcs_loss_of_block_lock')
+
+var received_loss_of_signal_alarm_branch = data
+    |eval(lambda: "layer1-info__current-alarms__received-loss-of-signal-alarm") //eval56
+        .as('received_loss_of_signal')
+
+    |stateDuration(lambda: "received_loss_of_signal" == alarm_set_string) //stateDuration57
+                    .unit(time_unit)
+                    .as('received_loss_of_signal_alarm_set_duration')
+
+    |stateDuration(lambda: "received_loss_of_signal" == not_supported_string) //stateDuration58
+                    .unit(time_unit)
+                    .as('received_loss_of_signal_not_supported_duration')
+
+    |stateDuration(lambda: "received_loss_of_signal" == alarm_not_set_string ) //stateDuration59
+                    .unit(time_unit)
+                    .as('received_loss_of_signal_alarm_not_set_duration')
+
+received_loss_of_signal_alarm_branch
+    |alert() //alert60
+         // Critical after input time
+         .crit(lambda: "received_loss_of_signal_alarm_set_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(received_loss_of_signal_alarm_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where61
+    |influxDBOut() //influxDBOut62
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_set_alert')
+        .tag('layer1_optic_alarm', 'received_loss_of_signal')
+
+received_loss_of_signal_alarm_branch
+    |alert() //alert63
+         // Warn after input time
+         .info(lambda: "received_loss_of_signal_not_supported_duration" >= 0.0)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(received_loss_of_signal_not_supported_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where64
+    |influxDBOut() //influxDBOut65
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'not_supported_alert')
+        .tag('layer1_optic_alarm', 'received_loss_of_signal')
+
+received_loss_of_signal_alarm_branch
+    |alert() //alert66
+        //info on clear after input time
+         .info(lambda: "received_loss_of_signal_alarm_not_set_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(received_loss_of_signal_alarm_not_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where67
+    |influxDBOut() //influxDBOut68
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_not_set_alert')
+        .tag('layer1_optic_alarm', 'received_loss_of_signal')
+
+var remote_fault_alarm_branch = data
+    |eval(lambda: "layer1-info__current-alarms__remote-fault-alarm") //eval69
+        .as('remote_fault')
+
+    |stateDuration(lambda: "remote_fault" == alarm_set_string) //stateDuration70
+                    .unit(time_unit)
+                    .as('remote_fault_alarm_set_duration')
+
+    |stateDuration(lambda: "remote_fault" == not_supported_string) //stateDuration71
+                    .unit(time_unit)
+                    .as('remote_fault_not_supported_duration')
+
+    |stateDuration(lambda: "remote_fault" == alarm_not_set_string ) //stateDuration72
+                    .unit(time_unit)
+                    .as('remote_fault_alarm_not_set_duration')
+
+remote_fault_alarm_branch
+    |alert() //alert73
+         // Critical after input time
+         .crit(lambda: "remote_fault_alarm_set_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(remote_fault_alarm_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where74
+    |influxDBOut() //influxDBOut75
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_set_alert')
+        .tag('layer1_optic_alarm', 'remote_fault')
+
+remote_fault_alarm_branch
+    |alert() //alert76
+         // Warn after input time
+         .info(lambda: "remote_fault_not_supported_duration" >= 0.0)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(remote_fault_not_supported_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where77
+    |influxDBOut() //influxDBOut78
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'not_supported_alert')
+        .tag('layer1_optic_alarm', 'remote_fault')
+
+remote_fault_alarm_branch
+    |alert() //alert79
+        //info on clear after input time
+         .info(lambda: "remote_fault_alarm_not_set_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(remote_fault_alarm_not_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where80
+    |influxDBOut() //influxDBOut81
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_not_set_alert')
+        .tag('layer1_optic_alarm', 'remote_fault')
+
+var rx_opd_alarm_branch = data
+    |eval(lambda: "layer1-info__current-alarms__rx-opd-alarm") //eval82
+        .as('rx_opd')
+
+    |stateDuration(lambda: "rx_opd" == alarm_set_string) //stateDuration83
+                    .unit(time_unit)
+                    .as('rx_opd_alarm_set_duration')
+
+    |stateDuration(lambda: "rx_opd" == not_supported_string) //stateDuration84
+                    .unit(time_unit)
+                    .as('rx_opd_not_supported_duration')
+
+    |stateDuration(lambda: "rx_opd" == alarm_not_set_string ) //stateDuration85
+                    .unit(time_unit)
+                    .as('rx_opd_alarm_not_set_duration')
+
+rx_opd_alarm_branch
+    |alert() //alert86
+         // Critical after input time
+         .crit(lambda: "rx_opd_alarm_set_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(rx_opd_alarm_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where87
+    |influxDBOut() //influxDBOut88
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_set_alert')
+        .tag('layer1_optic_alarm', 'rx_opd')
+
+rx_opd_alarm_branch
+    |alert() //alert89
+         // Warn after input time
+         .info(lambda: "rx_opd_not_supported_duration" >= 0.0)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(rx_opd_not_supported_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where90
+    |influxDBOut() //influxDBOut91
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'not_supported_alert')
+        .tag('layer1_optic_alarm', 'rx_opd')
+
+rx_opd_alarm_branch
+    |alert() //alert92
+        //info on clear after input time
+         .info(lambda: "rx_opd_alarm_not_set_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(rx_opd_alarm_not_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where93
+    |influxDBOut() //influxDBOut94
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_not_set_alert')
+        .tag('layer1_optic_alarm', 'rx_opd')
+
+var sd_ber_alarm_branch = data
+    |eval(lambda: "layer1-info__current-alarms__sd-ber-alarm") //eval95
+        .as('sd_ber')
+
+    |stateDuration(lambda: "sd_ber" == alarm_set_string) //stateDuration96
+                    .unit(time_unit)
+                    .as('sd_ber_alarm_set_duration')
+
+    |stateDuration(lambda: "sd_ber" == not_supported_string) //stateDuration97
+                    .unit(time_unit)
+                    .as('sd_ber_not_supported_duration')
+
+    |stateDuration(lambda: "sd_ber" == alarm_not_set_string ) //stateDuration98
+                    .unit(time_unit)
+                    .as('sd_ber_alarm_not_set_duration')
+
+sd_ber_alarm_branch
+    |alert() //alert99
+         // Critical after input time
+         .crit(lambda: "sd_ber_alarm_set_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(sd_ber_alarm_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where100
+    |influxDBOut() //influxDBOut101
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_set_alert')
+        .tag('layer1_optic_alarm', 'sd_ber')
+
+sd_ber_alarm_branch
+    |alert() //alert102
+         // Warn after input time
+         .info(lambda: "sd_ber_not_supported_duration" >= 0.0)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(sd_ber_not_supported_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where103
+    |influxDBOut() //influxDBOut104
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'not_supported_alert')
+        .tag('layer1_optic_alarm', 'sd_ber')
+
+sd_ber_alarm_branch
+    |alert() //alert105
+        //info on clear after input time
+         .info(lambda: "sd_ber_alarm_not_set_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(sd_ber_alarm_not_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where106
+    |influxDBOut() //influxDBOut107
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_not_set_alert')
+        .tag('layer1_optic_alarm', 'sd_ber')
+
+var sf_ber_alarm_branch = data
+    |eval(lambda: "layer1-info__current-alarms__sf-ber-alarm") //eval108
+        .as('sf_ber')
+
+    |stateDuration(lambda: "sf_ber" == alarm_set_string) //stateDuration109
+                    .unit(time_unit)
+                    .as('sf_ber_alarm_set_duration')
+
+    |stateDuration(lambda: "sf_ber" == not_supported_string) //stateDuration110
+                    .unit(time_unit)
+                    .as('sf_ber_not_supported_duration')
+
+    |stateDuration(lambda: "sf_ber" == alarm_not_set_string ) //stateDuration111
+                    .unit(time_unit)
+                    .as('sf_ber_alarm_not_set_duration')
+
+sf_ber_alarm_branch
+    |alert() //alert112
+         // Critical after input time
+         .crit(lambda: "sf_ber_alarm_set_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(sf_ber_alarm_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where113
+    |influxDBOut() //influxDBOut114
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_set_alert')
+        .tag('layer1_optic_alarm', 'sf_ber')
+
+sf_ber_alarm_branch
+    |alert() //alert115
+         // Warn after input time
+         .info(lambda: "sf_ber_not_supported_duration" >= 0.0)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(sf_ber_not_supported_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where116
+    |influxDBOut() //influxDBOut117
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'not_supported_alert')
+        .tag('layer1_optic_alarm', 'sf_ber')
+
+sf_ber_alarm_branch
+    |alert() //alert118
+        //info on clear after input time
+         .info(lambda: "sf_ber_alarm_not_set_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(sf_ber_alarm_not_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where119
+    |influxDBOut() //influxDBOut120
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_not_set_alert')
+        .tag('layer1_optic_alarm', 'sf_ber')
+
+var squelch_alarm_branch = data
+    |eval(lambda: "layer1-info__current-alarms__squelch-alarm") //eval121
+        .as('squelch')
+
+    |stateDuration(lambda: "squelch" == alarm_set_string) //stateDuration122
+                    .unit(time_unit)
+                    .as('squelch_alarm_set_duration')
+
+
+    |stateDuration(lambda: "squelch" == not_supported_string) //stateDuration123
+                    .unit(time_unit)
+                    .as('squelch_not_supported_duration')
+
+    |stateDuration(lambda: "squelch" == alarm_not_set_string ) //stateDuration124
+                    .unit(time_unit)
+                    .as('squelch_alarm_not_set_duration')
+
+squelch_alarm_branch
+    |alert() //alert125
+         // Critical after input time
+         .crit(lambda: "squelch_alarm_set_duration" >= alert_crit_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(squelch_alarm_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where126
+    |influxDBOut() //influxDBOut127
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_set_alert')
+        .tag('layer1_optic_alarm', 'squelch')
+
+squelch_alarm_branch
+    |alert() //alert128
+         // Warn after input time
+         .info(lambda: "squelch_not_supported_duration" >= 0.0)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(squelch_not_supported_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where129
+    |influxDBOut() //influxDBOut130
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'not_supported_alert')
+        .tag('layer1_optic_alarm', 'squelch')
+
+squelch_alarm_branch
+    |alert() //alert131
+        //info on clear after input time
+         .info(lambda: "squelch_alarm_not_set_duration" >= clear_time)
+         .stateChangesOnly()
+         .levelTag('level')
+         .id(alert_id)
+         .idField('id')
+         .message(squelch_alarm_not_set_message)
+         .messageField('msg')
+    |where(lambda: "level" != 'OK') //filter OKs out //where132
+    |influxDBOut() //influxDBOut133
+        .database(alerts_db)
+        .retentionPolicy(alerts_rp)
+        .measurement(alerts_meas)
+        .tag('state', 'alarm_not_set_alert')
+        .tag('layer1_optic_alarm', 'squelch')

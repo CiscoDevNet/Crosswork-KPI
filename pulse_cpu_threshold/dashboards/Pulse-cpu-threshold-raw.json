@@ -1,0 +1,401 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_ROBOT_ALERTDB",
+      "label": "robot_alertdb",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "4.2.0"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "influxdb",
+      "name": "InfluxDB",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "enable": true,
+    "list": [
+      {
+        "query": "SELECT * FROM $ALERTS_RP.\"alerts\" WHERE $timeFilter AND Producer =~ /^$Router$/ AND id =~ /pulse_cpu_threshold/ AND level = 'CRITICAL'",
+        "type": "alert",
+        "titleColumn": "id",
+        "enable": true,
+        "iconColor": "rgb(253, 7, 7)",
+        "limit": 100,
+        "tagsColumn": "Producer",
+        "datasource": "robot_alertdb",
+        "name": "CRITICAL",
+        "textColumn": "msg"
+      },
+      {
+        "query": "SELECT * FROM $ALERTS_RP.\"alerts\" WHERE $timeFilter AND Producer =~ /^$Router$/ AND id =~ /pulse_cpu_threshold/ AND level = 'WARNING'",
+        "type": "alert",
+        "titleColumn": "id",
+        "enable": true,
+        "iconColor": "rgb(237, 149, 3)",
+        "limit": 100,
+        "tagsColumn": "Producer",
+        "datasource": "robot_alertdb",
+        "name": "WARNING",
+        "textColumn": "msg"
+      },
+      {
+        "datasource": "robot_alertdb",
+        "enable": true,
+        "iconColor": "rgb(253, 7, 7)",
+        "limit": 100,
+        "name": "MAJOR",
+        "query": "SELECT * FROM $ALERTS_RP.\"alerts\" WHERE $timeFilter AND Producer =~ /^$Router$/ AND id =~ /pulse_cpu_threshold/ AND level = 'MAJOR'",
+        "tagsColumn": "Producer",
+        "textColumn": "msg",
+        "titleColumn": "id",
+        "type": "alert"
+      },
+      {
+        "datasource": "robot_alertdb",
+        "enable": true,
+        "iconColor": "rgb(237, 149, 3)",
+        "limit": 100,
+        "name": "MINOR",
+        "query": "SELECT * FROM $ALERTS_RP.\"alerts\" WHERE $timeFilter AND Producer =~ /^$Router$/ AND id =~ /pulse_cpu_threshold/ AND level = 'MINOR'",
+        "tagsColumn": "Producer",
+        "textColumn": "msg",
+        "titleColumn": "id",
+        "type": "alert"
+      },
+      {
+        "query": "SELECT * FROM $ALERTS_RP.\"alerts\" WHERE $timeFilter AND Producer =~ /^$Router$/ AND id =~ /pulse_cpu_threshold/ AND level = 'INFO'",
+        "type": "alert",
+        "titleColumn": "id",
+        "enable": false,
+        "iconColor": "rgb(34, 191, 13)",
+        "limit": 100,
+        "tagsColumn": "Producer",
+        "datasource": "robot_alertdb",
+        "name": "INFO",
+        "textColumn": "msg"
+      }
+    ]
+  },
+  "description": "",
+  "editable": false,
+  "gnetId": null,
+  "graphTooltip": 2,
+  "hideControls": false,
+  "id": null,
+  "links": [],
+  "refresh": false,
+  "rows": [
+    {
+      "collapse": false,
+      "height": "250",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "datasource": "robot_alertdb",
+          "decimals": null,
+          "fill": 1,
+          "id": 1,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "hideEmpty": true,
+            "hideZero": false,
+            "max": true,
+            "min": true,
+            "rightSide": true,
+            "show": true,
+            "sort": "current",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "percentage": false,
+          "pointradius": 1,
+          "points": true,
+          "renderer": "flot",
+          "repeat": null,
+          "seriesOverrides": [],
+          "span": 12,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "alias": "$col",
+              "dsType": "influxdb",
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "hide": false,
+              "policy": "default",
+              "query": "SELECT /^$RawFields$/ FROM $RP.\"Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization\" WHERE $timeFilter AND \"Producer\" =~ /^$Router$/ and \"node-name\" =~ /^$nodename$/ GROUP BY *",
+              "rawQuery": true,
+              "refId": "C",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "$Router  - $nodename",
+          "tooltip": {
+            "shared": false,
+            "sort": 2,
+            "value_type": "individual"
+          },
+          "transparent": true,
+          "type": "graph",
+          "xaxis": {
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": [
+              "total"
+            ]
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "percent",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": "nodename",
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": true,
+      "title": "$Router",
+      "titleSize": "h5"
+    }
+  ],
+  "schemaVersion": 14,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "robot_alertdb",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "Router",
+        "options": [],
+        "query": "Show Tag Values from $RP.\"Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization\" WITH Key = \"Producer\"",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "tagValuesQuery": "",
+        "useTags": false,
+        "allValue": null,
+        "tagsQuery": "",
+        "label": "Alert Period",
+        "current": {
+          "value": "rp30d_1",
+          "text": "rp30d_1"
+        },
+        "tags": [],
+        "type": "query",
+        "includeAll": false,
+        "options": [],
+        "refresh": 1,
+        "regex": "",
+        "sort": 0,
+        "query": "show retention policies",
+        "datasource": "robot_alertdb",
+        "hide": 2,
+        "name": "ALERTS_RP",
+        "multi": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "robot_alertdb",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "nodename",
+        "options": [],
+        "query": "SHOW TAG VALUES  FROM $RP.\"Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization\" WITH KEY= \"node-name\"  where Producer =~ /^$Router$/",
+        "refresh": 1,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "robot_alertdb",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Sensor",
+        "multi": true,
+        "name": "RawFields",
+        "options": [],
+        "query": "SHOW FIELD KEYS  FROM $RP.\"Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization\"",
+        "refresh": 1,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "tagValuesQuery": "",
+        "useTags": false,
+        "allValue": null,
+        "tagsQuery": "",
+        "label": "Retention",
+        "current": {
+          "value": "rp1h_1",
+          "text": "rp1h_1"
+        },
+        "tags": [],
+        "type": "query",
+        "includeAll": false,
+        "options": [],
+        "refresh": 1,
+        "regex": "",
+        "sort": 0,
+        "query": "show retention policies",
+        "datasource": "robot_alertdb",
+        "hide": 0,
+        "name": "RP",
+        "multi": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "rp30d_1",
+          "value": "rp30d_1"
+        },
+        "datasource": "robot_alertdb",
+        "hide": 0,
+        "includeAll": false,
+        "label": "RP_ALERTS",
+        "multi": false,
+        "name": "RP_ALERTS",
+        "options": [],
+        "query": "show retention policies",
+        "refresh": 1,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "utc",
+  "title": "Pulse-cpu-threshold-raw",
+  "version": 9
+}

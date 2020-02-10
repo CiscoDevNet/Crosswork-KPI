@@ -1,0 +1,92 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_layer2_lldp_summary",
+        "kpi_name": "LLDP neighbors",
+        "category": "LLDP",
+        "summary": "Monitors LLDP neighbors; generates an alert when any sudden changes are detected",
+        "details": "Monitors LLDP neighbors; generates an alert when any sudden changes are detected",
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_layer2_lldp_summary_template.tick",
+              "script": "",
+              "template": "stream-stddev-dist-count-alert-master-template",
+              "template_vars": "pulse_layer2_lldp_summary_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_layer2_lldp_summary_template.tick",
+              "script": "",
+              "template": "cq-master-template",
+              "template_vars": "cq_7d_layer2_lldp_summary_vars.json",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_layer2_lldp_summary_template.tick",
+              "script": "",
+              "template": "cq-master-template",
+              "template_vars": "cq_30d_layer2_lldp_summary_vars.json",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-layer2-lldp-summary.json",
+              "label": "Summary"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-layer2-lldp-raw.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "baselining": false,
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-ethernet-lldp-oper:2015-11-09",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 120,
+                "min": 10,
+                "max": 900,
+                "increment": 10
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-ethernet-lldp-oper:lldp/nodes/node/neighbors/summaries/summary/lldp-neighbor/device-id"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-ethernet-lldp-oper:lldp/nodes/node/neighbors/summaries/summary/lldp-neighbor/chassis-id"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-ethernet-lldp-oper:lldp/nodes/node/neighbors/summaries/summary/lldp-neighbor/port-id-detail"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-ethernet-lldp-oper:lldp/nodes/node/neighbors/summaries/summary/lldp-neighbor/header-version"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-ethernet-lldp-oper:lldp/nodes/node/neighbors/summaries/summary/lldp-neighbor/hold-time"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-ethernet-lldp-oper:lldp/nodes/node/neighbors/summaries/summary/lldp-neighbor/enabled-capabilities"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_memory_utilization_cxr",
+        "kpi_name": "Memory utilization (cXR)",
+        "category": "Memory",
+        "summary": "Monitors memory usage across route processor and line cards on routers on classic XR devices",
+        "details": "Monitors memory usage across route processor and line cards on routers on classic XR devices; generates an alert when memory usage is unusual",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 120,
+                "min": 10,
+                "max": 900,
+                "increment": 10
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-nto-misc-shmem-oper:memory-summary/nodes/node/summary/ram-memory"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-nto-misc-shmem-oper:memory-summary/nodes/node/summary/free-physical-memory"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-nto-misc-shmem-oper:memory-summary/nodes/node/summary/system-ram-memory"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-nto-misc-shmem-oper:memory-summary/nodes/node/summary/free-application-memory"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_memory_utilization_cxr_template.tick",
+              "script": "",
+              "template": "stream-stddev-activate-master-template",
+              "template_vars": "memory_utilization_cxr_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_30d_memory_utilization_cxr_template.tick",
+              "script": "",
+              "template": "cq-master-template",
+              "template_vars": "cq_30d_memory_utilization_cxr_vars.json",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_7d_memory_utilization_cxr_template.tick",
+              "script": "",
+              "template": "cq-master-template",
+              "template_vars": "cq_7d_memory_utilization_cxr_vars.json",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-memory-utilization-cxr-summary.json",
+              "label": "Summary"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-memory-utilization-cxr-raw.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "baselining": false,
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-nto-misc-shmem-oper:2015-11-09"
+      }
+    ]
+  }
+}

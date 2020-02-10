@@ -1,0 +1,97 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_routing_rib_ospf",
+        "kpi_name": "RIB OSPF route count",
+        "category": "Layer3-Routing",
+        "summary": "Monitors RIB for route count and memory used by OSPF",
+        "details": "Monitors RIB for route count and memory used by OSPF; generates an alert when an anomaly is detected (such as significant increase or decrease in route counts)",
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_routing_rib_ospf_routememory_template.tick",
+              "script": "",
+              "template": "stream-stddev-activate-master-template",
+              "template_vars": "routing_rib_ospf_routememory_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_routing_rib_ospf_routecount_template.tick",
+              "script": "",
+              "template": "stream-stddev-activate-master-template",
+              "template_vars": "routing_rib_ospf_routecount_vars.json",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_routing_rib_ospf_template.tick",
+              "script": "",
+              "template": "cq-master-template",
+              "template_vars": "cq_7d_routing_rib_ospf_vars.json",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_routing_rib_ospf_template.tick",
+              "script": "",
+              "template": "cq-master-template",
+              "template_vars": "cq_30d_routing_rib_ospf_vars.json",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-routing-rib-ospf-routecount-summary.json",
+              "label": "Summary"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-routing-rib-ospf-routecount-raw.json",
+              "label": "Raw"
+            }
+          ]
+        },
+        "baselining": false,
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-ip-rib-ipv4-oper:2015-11-09",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 60,
+                "min": 10,
+                "max": 300,
+                "increment": 10
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-ip-rib-ipv4-oper:rib/vrfs/vrf/afs/af/safs/saf/ip-rib-route-table-names/ip-rib-route-table-name/protocol/ospf/as/information/routes-counts"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-ip-rib-ipv4-oper:rib/vrfs/vrf/afs/af/safs/saf/ip-rib-route-table-names/ip-rib-route-table-name/protocol/ospf/as/information/active-routes-count"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-ip-rib-ipv4-oper:rib/vrfs/vrf/afs/af/safs/saf/ip-rib-route-table-names/ip-rib-route-table-name/protocol/ospf/as/information/deleted-routes-count"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-ip-rib-ipv4-oper:rib/vrfs/vrf/afs/af/safs/saf/ip-rib-route-table-names/ip-rib-route-table-name/protocol/ospf/as/information/protocol-route-memory"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-ip-rib-ipv4-oper:rib/vrfs/vrf/afs/af/safs/saf/ip-rib-route-table-names/ip-rib-route-table-name/protocol/ospf/as/information/paths-count"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

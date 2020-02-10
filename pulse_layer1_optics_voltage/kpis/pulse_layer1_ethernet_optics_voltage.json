@@ -1,0 +1,113 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_layer1_optics_voltage",
+        "kpi_name": "Layer 1 optical voltage",
+        "category": "Layer1-Optics",
+        "summary": "Monitors per-port optical voltage",
+        "details": "Monitors per-port optical voltage; generates alert when voltages exceeds the configured threshold",
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_layer1_optics_voltage_template.tick",
+              "script": "",
+              "template": "five_state_alert-master-template",
+              "template_vars": "pulse_layer1_optics_voltage_vars.json",
+              "type": "stream",
+              "scope": "local"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-layer1-ethernet-optics-voltage.json",
+              "label": "Detailed"
+            }
+          ]
+        },
+        "baselining": false,
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-drivers-media-eth-oper:2015-01-07",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 300,
+                "min": 10,
+                "max": 900,
+                "increment": 10
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/admin-state"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/oper-state-up"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/media-type"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/phy-present"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/loopback"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/phy-details/vendor"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/phy-details/optics-wavelength"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/phy-details/vendor-part-number"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/phy-details/vendor-serial-number"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/phy-details/transceiver-voltage"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/phy-details/dig-opt-mon-alarm-thresholds/transceiver-voltage-alarm-low"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/phy-details/dig-opt-mon-alarm-thresholds/transceiver-voltage-alarm-high"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/phy-details/dig-opt-mon-alarm-thresholds/transceiver-voltage-warning-low"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/phy-details/dig-opt-mon-alarm-thresholds/transceiver-voltage-warning-high"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/phy-info/phy-details/dig-opt-mon-alarms/transceiver-voltage"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/link-state"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/led-state"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/speed"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/duplex"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface/layer1-info/flowcontrol"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
