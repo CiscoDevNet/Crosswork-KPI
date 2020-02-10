@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 //PULSE_RUN_TIME Producer name or regex(future) for producer names
-var uuid string
+var profile_id string
 
 //KPI_INTERNAL Measurement in influxDB to retrieve the data from
 var measurement = 'Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic'
@@ -18,7 +18,7 @@ var measurement = 'Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statis
 //KPI_INTERNAL Optional where filter expression to filter data stream before passing for transformation
 var where_filter = lambda: FALSE
 
-// KPI_INTERNAL filter var to filter data only related to producer(s)
+// KPI_INTERNAL filter var to filter data only related to kpi profile id
 var where_producer = lambda: FALSE
 
 //KPI_INTERNAL Optional list of group by dimensions

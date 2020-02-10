@@ -18,7 +18,7 @@ Sensors
 Atribute|Details
 ---:|:---
 **Subscription** | Cisco-IOS-XR-ethernet-lldp-oper:lldp/nodes/node/neighbors/summaries/summary
-**Cadence(min)** | 2 (default), 2 (min), 15 (max) , 1 (incr)
+**Cadence(sec)** | 120 (default), 10 (min), 900 (max) , 10 (incr)
 **Keys**         | `'Producer'`
 **Sensors**      |
                             lldp-neighbor/device-id

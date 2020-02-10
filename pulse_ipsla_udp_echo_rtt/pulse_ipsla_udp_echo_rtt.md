@@ -18,7 +18,7 @@ Sensors
 Atribute|Details
 ---:|:---
 **Subscription** | Cisco-IOS-XR-man-ipsla-oper:ipsla/operation-data/operations/operation/statistics/latest/target
-**Cadence(min)** | 1 (default), 1 (min), 15 (max) , 1 (incr)
+**Cadence(sec)** | 60 (default), 10 (min), 900 (max) , 10 (incr)
 **Keys**         | `'Producer', 'operation-id'`
 **Sensors**      |
                             common-stats/response-time

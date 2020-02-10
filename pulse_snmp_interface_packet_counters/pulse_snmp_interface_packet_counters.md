@@ -18,7 +18,7 @@ Sensors
 Atribute|Details
 ---:|:---
 **Subscription** | IF-MIB:IF-MIB/ifTable/ifEntry
-**Cadence(min)** | 5 (default), 1 (min), 15 (max) , 1 (incr)
+**Cadence(sec)** | 300 (default), 60 (min), 900 (max) , 60 (incr)
 **Keys**         | `*`
 **Sensors**      |
                             ifName

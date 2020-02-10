@@ -24,7 +24,7 @@ var alerts_meas string
 var alerts_rp string
 
 //PULSE_RUN_TIME Producer name or regex(future) for producer names
-var uuid string
+var profile_id string
 
 //KPI_INTERNAL KPI ID of the kpi this TICKscript measures
 var kpi_id = 'pulse_routing_rib_bgp'
@@ -44,8 +44,8 @@ var measurement = 'Cisco-IOS-XR-ip-rib-ipv4-oper:rib/vrfs/vrf/afs/af/safs/saf/ip
 //KPI_INTERNAL Optional where filter expression to filter data stream before passing for transformation
 var where_filter = lambda: TRUE
 
-// KPI_INTERNAL filter var to filter data only related to producer(s)
-var where_producer = lambda: TRUE
+// KPI_INTERNAL filter var to filter data only related to kpi profile id
+var where_producer = lambda: strContains("ProfileIDs", profile_id)
 
 //KPI_INTERNAL Optional list of group by dimensions
 var groups = [*]
@@ -65,6 +65,9 @@ var clear_threshold = 2.0
 //KPI_THRESHOLDS (Activation Threshold) Values must exceed the activation threshold to generate a standard deviation alert, if -1, ignored.
 var activation_threshold = -1.0
 
+//PULSE_RUN_TIME (Downsample Factor) Down sample factor for alert evaluation applied on data stream (Default : 1 , Min : 1 , Max : 10)
+var downsample_factor = 1
+
 // Node: data
 // Input: stream from measurement, where filters, group by
 // Output: streams as per the filter and group by above
@@ -75,6 +78,7 @@ var data = stream //stream0
         .where(where_filter)
         .groupBy(groups)
         .quiet()
+    |sample(downsample_factor) //sample2
 
 
 
@@ -85,7 +89,7 @@ var data = stream //stream0
 // Output: kpi_stream
 // Details: takes raw data and transforms it to kpi based on the stream_eval_lambda funtion
 var transform = data
-    |eval(stream_eval_lambda) //eval2
+    |eval(stream_eval_lambda) //eval3
         .as('kpi_stream')
         .quiet()
 
@@ -96,16 +100,17 @@ var transform = data
 // Details: Takes the transformed kpi data and identifies how many SDs away the sample is from mean
 //          And keeps track of how long the value is in alert or clear condition
 var stream_sd = transform
-    |eval(lambda: sigma("kpi_stream")) //eval3
+    |eval(lambda: sigma("kpi_stream")) //eval4
         .as('sigma')
         .keep('kpi_stream', 'sigma')
-    |default() //insert the thresholds into the data stream //default4
+    |default() //insert the thresholds into the data stream //default5
         .field('crit_threshold', crit_threshold)
         .field('warn_threshold', warn_threshold)
         .field('clear_threshold', clear_threshold)
         .field('activation_threshold', activation_threshold)
         .tag('kpi_id', kpi_id)
         .field('alert_src', 'TICK')
+        .tag('profile_id', profile_id)
 
 // Alerting Node for warning and crtical
 // Input: stream_sd
@@ -113,7 +118,7 @@ var stream_sd = transform
 // TODO need to understand the exact format the ASTACK requires the alerts to be
 // generated and posted
 stream_sd
-    |alert() //alert5
+    |alert() //alert6
          // Warning on warning threshold
          .warn(lambda: ("sigma" >= warn_threshold AND (("kpi_stream" >= activation_threshold AND activation_threshold != -1) OR activation_threshold == -1)))
          // Critical on critical threshold
@@ -125,8 +130,8 @@ stream_sd
          .idField('id')
          .message(alert_message)
          .messageField('msg')
-    |where(lambda: "level" != 'OK') //filter OKs out //where6
-    |influxDBOut() //influxDBOut7
+    |where(lambda: "level" != 'OK') //filter OKs out //where7
+    |influxDBOut() //influxDBOut8
         .database(alerts_db)
         .retentionPolicy(alerts_rp)
         .measurement(alerts_meas)
@@ -138,7 +143,7 @@ stream_sd
 // TODO need to understand the exact format the ASTACK requires the alerts to be
 // generated and posted
 stream_sd
-    |alert() //alert8
+    |alert() //alert9
          //info on clear threshold
          .info(lambda: ("sigma" < clear_threshold))
          .stateChangesOnly()
@@ -147,8 +152,8 @@ stream_sd
          .idField('id')
          .message(clear_message)
          .messageField('msg')
-    |where(lambda: "level" != 'OK') //filter OKs out //where9
-    |influxDBOut() //influxDBOut10
+    |where(lambda: "level" != 'OK') //filter OKs out //where10
+    |influxDBOut() //influxDBOut11
          .database(alerts_db)
          .retentionPolicy(alerts_rp)
          .measurement(alerts_meas)

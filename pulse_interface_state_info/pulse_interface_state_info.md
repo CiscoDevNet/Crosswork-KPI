@@ -18,7 +18,7 @@ Sensors
 Atribute|Details
 ---:|:---
 **Subscription** | Cisco-IOS-XR-pfi-im-cmd-oper:interfaces/interface-briefs/interface-brief
-**Cadence(min)** | 5 (default), 1 (min), 15 (max) , 1 (incr)
+**Cadence(sec)** | 300 (default), 10 (min), 900 (max) , 10 (incr)
 **Keys**         | `'Producer', 'interface-name'`
 **Sensors**      |
                             type

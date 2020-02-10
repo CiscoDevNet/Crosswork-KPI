@@ -18,7 +18,7 @@ Sensors
 Atribute|Details
 ---:|:---
 **Subscription** | Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic
-**Cadence(min)** | 5 (default), 1 (min), 15 (max) , 1 (incr)
+**Cadence(sec)** | 300 (default), 10 (min), 900 (max) , 10 (incr)
 **Keys**         | `*`
 **Sensors**      |
                             received-total64-octet-frames

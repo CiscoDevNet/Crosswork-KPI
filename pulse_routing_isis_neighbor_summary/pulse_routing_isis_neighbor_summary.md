@@ -18,7 +18,7 @@ Sensors
 Atribute|Details
 ---:|:---
 **Subscription** | Cisco-IOS-XR-clns-isis-oper:isis/instances/instance/neighbor-summaries/neighbor-summary
-**Cadence(min)** | 1 (default), 1 (min), 5 (max) , 1 (incr)
+**Cadence(sec)** | 60 (default), 10 (min), 300 (max) , 10 (incr)
 **Keys**         | `'Producer'`
 **Sensors**      |
                             level12-neigbors/neighbor-up-count

@@ -18,7 +18,7 @@ Sensors
 Atribute|Details
 ---:|:---
 **Subscription** | Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/interfaces/interface
-**Cadence(min)** | 5 (default), 5 (min), 15 (max) , 1 (incr)
+**Cadence(sec)** | 300 (default), 10 (min), 900 (max) , 10 (incr)
 **Keys**         | `'Producer', 'node-name'`
 **Sensors**      |
                             admin-state

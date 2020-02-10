@@ -1,0 +1,196 @@
+{
+  "kpis": {
+    "kpi": [
+      {
+        "kpi_id": "pulse_ethernet_port_error_counters",
+        "kpi_name": "Ethernet port error counters",
+        "category": "Layer1-Traffic",
+        "summary": "Monitors port transmit and receive error counters",
+        "details": "Monitors port transmit and receive error counters",
+        "scripts": {
+          "script": [
+            {
+              "script_id": "pulse_ethernet_port_error_counters_mru-template.tick",
+              "template_vars": "ethernet_port_error_counters_mru_vars.json",
+              "script": "",
+              "template": "two_level_rate_threshold-master-template",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_ethernet_port_error_counters_dropped_packets-template.tick",
+              "template_vars": "ethernet_port_error_counters_dropped_packets_vars.json",
+              "script": "",
+              "template": "two_level_rate_threshold-master-template",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_ethernet_port_error_counters_rfc-template.tick",
+              "template_vars": "ethernet_port_error_counters_rfc_vars.json",
+              "script": "",
+              "template": "two_level_rate_threshold-master-template",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_ethernet_port_error_counters_misc-template.tick",
+              "template_vars": "ethernet_port_error_counters_misc_vars.json",
+              "script": "",
+              "template": "two_level_rate_threshold-master-template",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_ethernet_port_error_counters_underruns-template.tick",
+              "template_vars": "ethernet_port_error_counters_underruns_vars.json",
+              "script": "",
+              "template": "two_level_rate_threshold-master-template",
+              "type": "stream",
+              "scope": "local"
+            },
+            {
+              "script_id": "pulse_cq_7d_ethernet_port_error_counters_template.tick",
+              "script": "",
+              "template": "cq-master-template",
+              "template_vars": "cq_7d_ethernet_port_error_counters_vars.json",
+              "type": "batch",
+              "scope": "global"
+            },
+            {
+              "script_id": "pulse_cq_30d_ethernet_port_error_counters_template.tick",
+              "script": "",
+              "template": "cq-master-template",
+              "template_vars": "cq_30d_ethernet_port_error_counters_vars.json",
+              "type": "batch",
+              "scope": "global"
+            }
+          ]
+        },
+        "dashboards": {
+          "dashboard": [
+            {
+              "type": "jsonfile",
+              "value": "Pulse-port-error-counters-summary.json",
+              "label": "Summary"
+            },
+            {
+              "type": "jsonfile",
+              "value": "Pulse-port-error-counters-detail.json",
+              "label": "Detailed"
+            }
+          ]
+        },
+        "baselining": false,
+        "sensor_type": "YANG_MDT",
+        "module_and_revision": "Cisco-IOS-XR-drivers-media-eth-oper:2015-01-07",
+        "sensor_groups": {
+          "sensor_group": [
+            {
+              "cadence": {
+                "default": 300,
+                "min": 10,
+                "max": 900,
+                "increment": 10
+              },
+              "sensor_paths": {
+                "sensor_path": [
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-total-bytes"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-good-bytes"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-total-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/received-good-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/number-of-buffer-overrun-packets-dropped"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/number-of-aborted-packets-dropped"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/numberof-invalid-vlan-id-packets-dropped"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/invalid-dest-mac-drop-packets"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/invalid-encap-drop-packets"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/number-of-miscellaneous-packets-dropped"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/dropped-giant-packets-greaterthan-mru"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/dropped-ether-stats-undersize-pkts"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/dropped-jabbers-packets-greaterthan-mru"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/dropped-ether-stats-fragments"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/dropped-packets-with-crc-align-errors"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/ether-stats-collisions"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/symbol-errors"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/dropped-miscellaneous-error-packets"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/rfc2819-ether-stats-oversized-pkts"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/rfc2819-ether-stats-jabbers"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/rfc2819-ether-stats-crc-align-errors"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/rfc3635dot3-stats-alignment-errors"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/total-bytes-transmitted"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/total-good-bytes-transmitted"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/total-frames-transmitted"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/transmitted-good-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/buffer-underrun-packet-drops"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/aborted-packet-drops"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/uncounted-dropped-frames"
+                  },
+                  {
+                    "path_id": "Cisco-IOS-XR-drivers-media-eth-oper:ethernet-interface/statistics/statistic/miscellaneous-output-errors"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

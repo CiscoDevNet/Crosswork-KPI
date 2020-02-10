@@ -18,7 +18,7 @@ Sensors
 Atribute|Details
 ---:|:---
 **Subscription** | Cisco-IOS-XR-ip-rib-ipv6-oper:ipv6-rib/vrfs/vrf/afs/af/safs/saf/ip-rib-route-table-names/ip-rib-route-table-name/protocol/local/non-as/information
-**Cadence(min)** | 1 (default), 1 (min), 5 (max) , 1 (incr)
+**Cadence(sec)** | 60 (default), 10 (min), 300 (max) , 10 (incr)
 **Keys**         | `*`
 **Sensors**      |
                             routes-counts

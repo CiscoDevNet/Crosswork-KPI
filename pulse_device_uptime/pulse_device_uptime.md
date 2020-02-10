@@ -18,7 +18,7 @@ Sensors
 Atribute|Details
 ---:|:---
 **Subscription** | SNMPv2-MIB:SNMPv2-MIB/system
-**Cadence(min)** | 10 (default), 10 (min), 30 (max) , 1 (incr)
+**Cadence(sec)** | 600 (default), 600 (min), 1800 (max) , 60 (incr)
 **Keys**         | `*`
 **Sensors**      |
                             sysObjectID

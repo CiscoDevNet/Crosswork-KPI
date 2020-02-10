@@ -18,7 +18,7 @@ Sensors
 Atribute|Details
 ---:|:---
 **Subscription** | Cisco-IOS-XR-wdsysmon-fd-oper:system-monitoring/cpu-utilization
-**Cadence(min)** | 1 (default), 1 (min), 15 (max) , 1 (incr)
+**Cadence(sec)** | 60 (default), 10 (min), 900 (max) , 10 (incr)
 **Keys**         | `'Producer', 'node-name'`
 **Sensors**      |
                             total-cpu-one-minute

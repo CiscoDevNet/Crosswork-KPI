@@ -25,7 +25,7 @@ var alerts_meas string
 var alerts_rp string
 
 //PULSE_RUN_TIME Producer name or regex(future) for producer names
-var uuid string
+var profile_id string
 
 //KPI_INTERNAL KPI ID of the kpi this TICKscript measures
 var kpi_id = 'pulse_layer2_lldp_summary'
@@ -48,8 +48,8 @@ var measurement = 'Cisco-IOS-XR-ethernet-lldp-oper:lldp/nodes/node/neighbors/sum
 //KPI_INTERNAL Optional where filter expression to filter data stream before passing for transformation
 var where_filter = lambda: TRUE
 
-// KPI_INTERNAL filter var to filter data only related to producer(s)
-var where_producer = lambda: TRUE
+// KPI_INTERNAL filter var to filter data only related to kpi profile id
+var where_producer = lambda: strContains("ProfileIDs", profile_id)
 
 
 //KPI_INTERNAL Optional list of group by dimensions
@@ -79,6 +79,9 @@ var time_unit = 1s
 //KPI_INTERNAL Cadence of measurement data, sourced directly from KPI file
 var cadence duration
 
+//PULSE_RUN_TIME (Downsample Factor) Down sample factor for alert evaluation applied on data stream (Default : 1 , Min : 1 , Max : 10)
+var downsample_factor = 1
+
 // Node: data
 // Input: stream from measurement, where filters, group by
 // Output: streams as per the filter and group by above
@@ -89,6 +92,7 @@ var data = stream //stream0
         .where(where_filter)
         .groupBy(groups)
         .quiet()
+    |sample(downsample_factor) //sample2
 
 // TODO Need the see how we can handle if we have multiple data-sets are returned like
 // if we want to do SD based alerting on more than one field(s)
@@ -97,7 +101,7 @@ var data = stream //stream0
 // Output: kpi_stream
 // Details: takes raw data and transforms it to kpi based on the stream_eval_lambda funtion
 var transform = data
-    |eval(stream_eval_lambda) //eval2
+    |eval(stream_eval_lambda) //eval3
         .as('kpi_stream')
         .quiet()
 
@@ -108,12 +112,12 @@ var transform = data
 // Details: Takes the transformed kpi data and identifies how many SDs away the sample is from mean
 //          And keeps track of how long the value is in alert or clear condition
 var time_aggregate = transform
- |window() //window3
+ |window() //window4
     .period(cadence)
     .every(cadence)
-        |distinct('kpi_stream') //distinct4
+        |distinct('kpi_stream') //distinct5
         .as('kpi_stream_dist')
-        |count('kpi_stream_dist') //count5
+        |count('kpi_stream_dist') //count6
         .as('kpi_stream_agg_int')
 
 // Node: stream_sd
@@ -122,24 +126,25 @@ var time_aggregate = transform
 // Details: Takes the transformed kpi data and identifies how many SDs away the sample is from mean
 //          And keeps track of how long the value is in alert or clear condition
 var stream_sd = time_aggregate
-    |eval(lambda: sigma(float("kpi_stream_agg_int"))) //eval6
+    |eval(lambda: sigma(float("kpi_stream_agg_int"))) //eval7
         .as('sigma')
         .keep('kpi_stream_agg_int', 'sigma')
-        |stateDuration(lambda: "sigma" >= alert_threshold) //stateDuration7
+        |stateDuration(lambda: "sigma" >= alert_threshold) //stateDuration8
                     .unit(time_unit)
                     .as('alert_duration')
-    |stateDuration(lambda: "sigma" < clear_threshold) //stateDuration8
+    |stateDuration(lambda: "sigma" < clear_threshold) //stateDuration9
                     .unit(time_unit)
                     .as('clear_duration')
 
-    |eval(lambda: string(cadence)) //eval9
+    |eval(lambda: string(cadence)) //eval10
         .as('cadence')
         .keep() //keeps all other fields which would have been deleted
-    |default() //insert the thresholds into the data stream //default10
+    |default() //insert the thresholds into the data stream //default11
         .field('alert_threshold', alert_threshold)
         .field('clear_threshold', clear_threshold)
         .tag('kpi_id', kpi_id)
         .field('alert_src', 'TICK')
+        .tag('profile_id', profile_id)
 
 // Alerting Node for wanring and crtical
 // Input: stream_sd
@@ -147,7 +152,7 @@ var stream_sd = time_aggregate
 // TODO need to understand the exact format the ASTACK requires the alerts to be
 // generated and posted
 stream_sd
-    |alert() //alert11
+    |alert() //alert12
          // Warn after input time
          .warn(lambda: "alert_duration" >= alert_warn_time)
          // Critical after input time
@@ -159,8 +164,8 @@ stream_sd
          .idField('id')
          .message(alert_message)
          .messageField('msg')
-    |where(lambda: "level" != 'OK') //filter OKs out //where12
-    |influxDBOut() //influxDBOut13
+    |where(lambda: "level" != 'OK') //filter OKs out //where13
+    |influxDBOut() //influxDBOut14
         .database(alerts_db)
         .retentionPolicy(alerts_rp)
         .measurement(alerts_meas)
@@ -172,7 +177,7 @@ stream_sd
 // TODO need to understand the exact format the ASTACK requires the alerts to be
 // generated and posted
 stream_sd
-    |alert() //alert14
+    |alert() //alert15
          //info on clear after input time
          .info(lambda: "clear_duration" >= clear_time)
          .stateChangesOnly()
@@ -181,8 +186,8 @@ stream_sd
          .idField('id')
          .message(clear_message)
          .messageField('msg')
-    |where(lambda: "level" != 'OK') //filter OKs out //where15
-    |influxDBOut() //influxDBOut16
+    |where(lambda: "level" != 'OK') //filter OKs out //where16
+    |influxDBOut() //influxDBOut17
          .database(alerts_db)
          .retentionPolicy(alerts_rp)
          .measurement(alerts_meas)

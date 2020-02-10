@@ -18,7 +18,7 @@ Sensors
 Atribute|Details
 ---:|:---
 **Subscription** | Cisco-IOS-XR-nto-misc-oper:memory-summary/nodes/node/summary
-**Cadence(min)** | 2 (default), 2 (min), 15 (max) , 1 (incr)
+**Cadence(sec)** | 120 (default), 10 (min), 900 (max) , 10 (incr)
 **Keys**         | `'Producer', 'node-name'`
 **Sensors**      |
                             ram-memory
