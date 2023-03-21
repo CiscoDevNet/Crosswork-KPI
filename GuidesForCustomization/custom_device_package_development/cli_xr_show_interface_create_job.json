@@ -1,0 +1,44 @@
+{
+  "collection_job": {
+    "job_device_set": {
+      "device_set": {
+        "devices": {
+          "device_ids": [
+           "3fcfb0ea-0fb2-4750-8c87-60bc909e90fa"
+          ]
+        }
+      }
+    },
+    "sensor_output_configs": [
+      {
+        "sensor_data": {
+          "cli_yang_sensor": {
+            "path": "cli_xr_show_interface:brief[GigabitEthernet,0/0/0/0]"
+          }
+        },
+        "destination": {
+          "context_id": "show_if_br",
+          "destination_id": "c2a8fba8-8363-3d22-b0c2-a9e449693fae"
+        }
+      }
+    ],
+    "sensor_input_configs": [
+      {
+        "sensor_data": {
+          "cli_yang_sensor": {
+            "path": "cli_xr_show_interface:brief[GigabitEthernet,0/0/0/0]"
+          }
+        },
+        "cadence_in_millisec": "60000"
+      }
+    ],
+    "application_context": {
+      "context_id": "cli_xr_show_interface",
+      "application_id": "cw.nca"
+    },
+    "collection_mode": {
+      "lifetime_type": "APPLICATION_MANAGED",
+      "collector_type": "CLI_COLLECTOR"
+    }
+  }
+}
