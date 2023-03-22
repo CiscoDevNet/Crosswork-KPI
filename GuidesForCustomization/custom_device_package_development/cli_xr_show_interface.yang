@@ -1,0 +1,69 @@
+module cli_xr_show_interface {
+  namespace "urn:com:cisco:yang:clicollector";
+  prefix cli;
+
+  organization
+    "Cisco Systems, Inc.";
+
+  description
+    "YANG model for show interfaces CLI command output";
+
+  revision 2020-04-07 {
+    description
+      "Initial revision";
+  }
+
+  typedef state-enum {
+    type enumeration {
+      enum "admin-down" {
+        description
+          "state admin down";
+      }
+      enum "down" {
+        description
+          "state down";
+      }
+      enum "up" {
+        description
+          "state up";
+      }
+    }
+    description
+      "Interface state enum";
+  }
+
+  container brief {
+    description "Brief operational data for interface";
+    config false;
+    leaf interface-name {
+      type string;
+      description
+        "Name of the interface";
+    }
+    leaf state {
+      type state-enum;
+      description
+        "Operational state";
+    }
+    leaf line-state {
+      type state-enum;
+      description
+        "Line protocol state";
+    }
+    leaf encap {
+      type string;
+      description
+        "Interface encapsulation";
+    }
+    leaf mtu {
+      type uint32;
+      description
+        "MTU in bytes";
+    }
+    leaf bw {
+      type uint32;
+      description
+        "Interface bandwidth (Kb/s)";
+    }
+  }
+}
